@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlocksample;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
