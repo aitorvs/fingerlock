@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
 
     @Override
     public void onFingerLockReady() {
-        mStatus.setText("Fingerprint ready");
+        mStatus.setText(R.string.status_ready);
         mButton.setText(R.string.start_scanning);
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
