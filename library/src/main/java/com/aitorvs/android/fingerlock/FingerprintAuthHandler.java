@@ -30,6 +30,9 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
     private CancellationSignal mCancellationSignal;
     private FingerLock.FingerLockResultCallback mCallback;
 
+    // flags when the operation is canceled internally
+    private boolean mSelfCancelled;
+
     FingerprintAuthHandler(FingerprintManager.CryptoObject cryptoObject, FingerLock.FingerLockResultCallback callback) {
         mCryptoObject = cryptoObject;
         mCallback = callback;
@@ -45,12 +48,14 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
             // FIXME: 23/05/16 report error?
             return;
         }
+        mSelfCancelled = false;
         mCancellationSignal = new CancellationSignal();
         fpm.authenticate(mCryptoObject, mCancellationSignal, 0 /* flags */, this, null);;
     }
 
-    public void stop() {
+    public void stop(boolean self) {
         if (mCancellationSignal != null) {
+            mSelfCancelled = self;
             mCancellationSignal.cancel();
             mCancellationSignal = null;
         }
@@ -59,7 +64,7 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
     @Override
     public void onAuthenticationError(int errorCode, CharSequence errString) {
         super.onAuthenticationError(errorCode, errString);
-        if (mCallback != null) {
+        if (mCallback != null && !mSelfCancelled) {
             mCallback.onFingerLockError(FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR, new Exception(errString.toString()));
         }
     }
@@ -79,7 +84,7 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
             mCallback.onFingerLockAuthenticationSucceeded();
         }
         // auto stop
-        stop();
+        stop(true);
     }
 
     @Override

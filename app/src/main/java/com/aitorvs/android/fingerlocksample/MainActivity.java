@@ -1,10 +1,6 @@
 package com.aitorvs.android.fingerlocksample;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -32,13 +28,8 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
     protected void onResume() {
         super.onResume();
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            int granted = ContextCompat.checkSelfPermission(this, Manifest.permission.USE_FINGERPRINT);
-            if (granted != PackageManager.PERMISSION_GRANTED)
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.USE_FINGERPRINT}, 69);
-        }
-
-        FingerLock.register(this, this);
+        // register and use a key to increase security
+        FingerLock.register(this, getString(R.string.app_name), this);
     }
 
     @Override
@@ -49,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
     }
 
     @Override
-    public void onFingerLockError(@FingerLock.FingerlockErrorState int errorType, Exception e) {
+    public void onFingerLockError(@FingerLock.FingerLockErrorState int errorType, Exception e) {
         switch (errorType) {
             case FingerLock.FINGERPRINT_PERMISSION_DENIED:
             case FingerLock.FINGERPRINT_ERROR_HELP:
@@ -91,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
     }
 
     @Override
-    public void onFingerLockScanning(boolean newFingerprint) {
+    public void onFingerLockScanning(boolean invalidKey) {
         // clicking the button will stop the scanning
         mButton.setText(R.string.stop_scanning);
         mButton.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +102,6 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
             }
         });
 
-        mStatus.setText(newFingerprint ? R.string.status_scanning_new : R.string.status_scanning);
+        mStatus.setText(invalidKey ? R.string.status_scanning_new : R.string.status_scanning);
     }
 }
