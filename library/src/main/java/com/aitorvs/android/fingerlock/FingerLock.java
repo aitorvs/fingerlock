@@ -237,10 +237,12 @@ public class FingerLock {
 
         @Override
         public boolean unregister(@NonNull FingerLockResultCallback listener) {
-            // stop the authentication
-            stop();
-            return super.unregister(listener);
-        }
+            if (super.unregister(listener)) {
+                stop();
+                return true;
+            }
+
+            return false;        }
 
         @TargetApi(Build.VERSION_CODES.M)
         @Nullable
