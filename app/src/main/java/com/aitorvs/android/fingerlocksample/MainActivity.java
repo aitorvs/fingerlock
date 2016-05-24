@@ -43,13 +43,21 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
     public void onFingerLockError(@FingerLock.FingerLockErrorState int errorType, Exception e) {
         switch (errorType) {
             case FingerLock.FINGERPRINT_PERMISSION_DENIED:
+                // USE_PERMISSION is denied by the user, fallback to password authentication
             case FingerLock.FINGERPRINT_ERROR_HELP:
-            case FingerLock.FINGERPRINT_INVALID_STATE:
+                // there's some kind of recoverable error that can be solved. Call e.getMessage()
+                // to get help about the error
             case FingerLock.FINGERPRINT_NOT_RECOGNIZED:
+                // The fingerprint was not recognized, try another one
             case FingerLock.FINGERPRINT_NOT_SUPPORTED:
-            case FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR:
-                mStatus.setText(getString(R.string.status_error, e.getMessage()));
+                // Fingerprint authentication is not supported by the device. Fallback to password
+                // authentication
             case FingerLock.FINGERPRINT_REGISTRATION_NEEDED:
+                // There are no fingerprints registered in this device.
+                // Go to Settings -> Security -> Fingerprint and register at least one
+            case FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR:
+                // Unrecoverable internal error occurred. Unregister and register back
+                mStatus.setText(getString(R.string.status_error, e.getMessage()));
                 break;
         }
     }

@@ -367,7 +367,7 @@ public class FingerLock {
     }
 
     /**
-     * This interface is the contract for receiving the results of the fingerpring authentication
+     * This interface is the contract for receiving the results of the fingerprint authentication
      * activity
      */
     public interface FingerLockResultCallback {
@@ -409,7 +409,7 @@ public class FingerLock {
      * Error state
      */
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({FINGERPRINT_NOT_SUPPORTED, FINGERPRINT_NOT_RECOGNIZED, FINGERPRINT_PERMISSION_DENIED, FINGERPRINT_REGISTRATION_NEEDED, FINGERPRINT_INVALID_STATE, FINGERPRINT_ERROR_HELP, FINGERPRINT_UNRECOVERABLE_ERROR})
+    @IntDef({FINGERPRINT_NOT_SUPPORTED, FINGERPRINT_NOT_RECOGNIZED, FINGERPRINT_PERMISSION_DENIED, FINGERPRINT_REGISTRATION_NEEDED, FINGERPRINT_ERROR_HELP, FINGERPRINT_UNRECOVERABLE_ERROR})
     public @interface FingerLockErrorState {
     }
 
@@ -417,7 +417,6 @@ public class FingerLock {
     public static final int FINGERPRINT_NOT_RECOGNIZED = 1;
     public static final int FINGERPRINT_PERMISSION_DENIED = 2;
     public static final int FINGERPRINT_REGISTRATION_NEEDED = 3;
-    public static final int FINGERPRINT_INVALID_STATE = 4;
     public static final int FINGERPRINT_ERROR_HELP = 5;
     public static final int FINGERPRINT_UNRECOVERABLE_ERROR = 6;
 
