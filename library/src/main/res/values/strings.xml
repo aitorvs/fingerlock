@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">FingerLock</string>
+    <string name="fingerprint_description">Confirm fingerprint to continue.</string>
+    <string name="fingerprint_hint">Touch sensor</string>
+    <string name="password_description">Enter password to continue.</string>
+    <string name="new_fingerprint_enrolled_description">New fingerprint added, password is required to confirm.</string>
+    <string name="password">Password</string>
+    <string name="use_fingerprint_in_future">Use fingerprint in the future</string>
+    <string name="fingerprint_not_recognized">Fingerprint not recognized. Retry.</string>
+    <string name="no_fingerprints_registered">No fingerprint(s) registered.</string>
+    <string name="fingerprint_success">Fingerprint authenticated.</string>
+    <string name="use_password">Use password</string>
+    <string name="invalid_password">Invalid password. Retry.</string>
+    <string name="initializing">Initializing…</string>
+    <string name="sign_in">Sign in</string>
 </resources>

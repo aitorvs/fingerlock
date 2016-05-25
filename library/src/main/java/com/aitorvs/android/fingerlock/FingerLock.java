@@ -28,6 +28,7 @@ import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -54,8 +55,9 @@ public class FingerLock {
 
     static {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            impl = new MncFingerLockImpl();
+            impl = new Api23FingerLockImpl();
         } else {
+            // legacy stub implementation. Disable fingerprint
             impl = new BaseFingerLockImpl();
         }
     }
@@ -89,6 +91,10 @@ public class FingerLock {
          * @return <code>true</code> when executed successfully
          */
         boolean unregister(@NonNull FingerLockResultCallback listener);
+
+        boolean inUseBy(FingerLockResultCallback listener);
+
+        void recreateKey();
     }
 
     /**
@@ -96,20 +102,15 @@ public class FingerLock {
      */
     static class BaseFingerLockImpl implements FingerLockImpl {
 
-        protected Context mContext;
-        protected String mKeyName;
-        protected FingerLockResultCallback mCallback;
 
         @Override
         public boolean isFingerprintAuthSupported() {
-            invalidContext();
-
             return false;
         }
 
         @Override
         public boolean isFingerprintRegistered() {
-            return isFingerprintAuthSupported();
+            return false;
         }
 
         @Override
@@ -122,27 +123,26 @@ public class FingerLock {
 
         @Override
         public void register(@NonNull Context context, @Nullable String keyName, @NonNull FingerLockResultCallback callback) {
-            mContext = context;
-            mKeyName = keyName;
-            mCallback = callback;
+            //noinspection ConstantConditions
+            if (callback != null) {
+                // error out to inform the user
+                callback.onFingerLockError(FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
+            }
         }
 
         @Override
         public boolean unregister(@NonNull FingerLockResultCallback listener) {
-            if (mCallback == listener) {
-                mCallback = null;
-                mKeyName = null;
-                mContext = null;
-                return true;
-            }
+            return true;
+        }
 
+        @Override
+        public boolean inUseBy(FingerLockResultCallback listener) {
             return false;
         }
 
-        protected void invalidContext() throws IllegalStateException {
-            if (mContext == null) {
-                throw new IllegalStateException("Callback listener not registered");
-            }
+        @Override
+        public void recreateKey() {
+
         }
     }
 
@@ -150,7 +150,12 @@ public class FingerLock {
      * M implementation
      */
     @TargetApi(Build.VERSION_CODES.M)
-    static class MncFingerLockImpl extends BaseFingerLockImpl {
+    static class Api23FingerLockImpl implements FingerLockImpl {
+
+        private static final String TAG = Api23FingerLockImpl.class.getSimpleName();
+        protected Context mContext;
+        protected String mKeyName;
+        protected FingerLockResultCallback mCallback;
 
         // specific of the implementation for API >=23
         private FingerprintManager mFingerprintManager;
@@ -209,17 +214,23 @@ public class FingerLock {
 
         @Override
         public void register(@NonNull Context context, @Nullable String keyName, @NonNull FingerLockResultCallback callback) {
-            super.register(context, keyName, callback);
-
             // double check
             //noinspection ConstantConditions
             if (context == null || callback == null) {
                 throw new InvalidParameterException("Invalid or null input parameters");
+            } else if (mCallback != null) {
+                // already registered, force clean unregister
+                forceUnregister();
             }
+            Log.e(TAG, "Registering " + keyName);
+
+            mContext = context;
+            mCallback = callback;
+            mKeyName = keyName;
 
             // do the key thing
             if (keyName != null) {
-                KeyUtils.initKeyStore(keyName);
+                KeyUtils.initKeyStore();
             }
 
             mFingerprintManager = getFingerprintManager();
@@ -230,19 +241,56 @@ public class FingerLock {
                 callback.onFingerLockError(FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
             } else {
                 // all systems Go!
-                KeyUtils.recreateKey(keyName);
-                callback.onFingerLockReady();
+                if (KeyUtils.recreateKey(keyName)) {
+                    callback.onFingerLockReady();
+                } else {
+                    callback.onFingerLockError(FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
+                }
             }
         }
 
         @Override
+        public void recreateKey() {
+            if (mKeyName != null) {
+                KeyUtils.recreateKey(mKeyName);
+            }
+        }
+
+        @Override
+        public boolean inUseBy(FingerLockResultCallback listener) {
+            Log.e(TAG, "inUseBy: " + (mCallback == listener ? "true" : "false"));
+            return mContext != null && mCallback != null && mCallback == listener;
+        }
+
+        @Override
         public boolean unregister(@NonNull FingerLockResultCallback listener) {
-            if (super.unregister(listener)) {
+            if (mCallback == listener) {
+                mCallback = null;
+                mKeyName = null;
+                mContext = null;
+
                 stop();
+                Log.e(TAG, "unregister: OK");
                 return true;
             }
 
-            return false;        }
+            return false;
+        }
+
+        private void forceUnregister() {
+            mCallback = null;
+            mKeyName = null;
+            mContext = null;
+
+            stop();
+            Log.e(TAG, "Force unregister: OK");
+        }
+
+        private void invalidContext() throws IllegalStateException {
+            if (mContext == null) {
+                throw new IllegalStateException("Callback listener not registered");
+            }
+        }
 
         @TargetApi(Build.VERSION_CODES.M)
         @Nullable
@@ -282,25 +330,31 @@ public class FingerLock {
         impl.stop();
     }
 
+    public static boolean inUseBy(FingerLockResultCallback listener) {
+        return impl.inUseBy(listener);
+    }
+
+    public static void recreateKey() {
+        impl.recreateKey();
+    }
+
     /**
      * Helper class to handle the key store
      */
     @TargetApi(Build.VERSION_CODES.M)
     static class KeyUtils {
 
+        private static final String TAG = KeyUtils.class.getSimpleName();
         private static KeyGenerator mKeyGenerator;
         private static Cipher mCipher;
         private static KeyStore mKeyStore;
 
-        public static void initKeyStore(@NonNull String keyName) {
-            //noinspection ConstantConditions
-            if (keyName == null) {
-                throw new RuntimeException("Invalid key");
-            }
-
+        public static void initKeyStore() {
             try {
+
                 mKeyStore = KeyStore.getInstance("AndroidKeyStore");
                 mKeyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore");
+
             } catch (NoSuchAlgorithmException | NoSuchProviderException e) {
                 throw new RuntimeException("Failed to get the keyGenerator", e);
             } catch (KeyStoreException e) {
@@ -316,11 +370,16 @@ public class FingerLock {
             }
         }
 
+        private static boolean invalidKeyStore() {
+            return mKeyGenerator == null || mKeyStore == null || mCipher == null;
+        }
+
         public static boolean initCipher(@Nullable String keyName) {
-            if (mCipher == null) {
-                // we do not have a cipher
+            if (invalidKeyStore()) {
+                Log.w(TAG, "initCipher: Invalid keystore");
                 return false;
             }
+            if (BuildConfig.DEBUG) Log.d(TAG, "initCipher with key " + keyName);
 
             try {
                 mKeyStore.load(null);
@@ -337,9 +396,16 @@ public class FingerLock {
             }
         }
 
-        public static void recreateKey(String keyName) {
-            if (mCipher == null || mKeyGenerator == null) {
-                return;
+        /**
+         * Recreates the key
+         *
+         * @param keyName key name
+         * @return <code>true</code> when re-creation is done successfully
+         */
+        public static boolean recreateKey(@NonNull String keyName) {
+            if (invalidKeyStore()) {
+                Log.w(TAG, "recreateKey: Invalid keystore");
+                return false;
             }
 
             try {
@@ -359,10 +425,14 @@ public class FingerLock {
 
                 mKeyGenerator.generateKey();
 
-            } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
-                e.printStackTrace();
-            }
+                Log.d(TAG, String.format("Key \"%s\" recreated", keyName));
 
+                return true;
+
+            } catch (IOException | NoSuchAlgorithmException | CertificateException | InvalidAlgorithmParameterException e) {
+                Log.e(TAG, "recreateKey: ", e);
+                return false;
+            }
         }
     }
 

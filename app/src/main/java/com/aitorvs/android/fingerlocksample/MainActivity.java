@@ -2,14 +2,18 @@ package com.aitorvs.android.fingerlocksample;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aitorvs.android.fingerlock.FingerLock;
+import com.aitorvs.android.fingerlock.FingerprintDialog;
 
 
-public class MainActivity extends AppCompatActivity implements FingerLock.FingerLockResultCallback {
+public class MainActivity extends AppCompatActivity implements FingerLock.FingerLockResultCallback
+        , FingerprintDialog.Callback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mStatus;
@@ -22,6 +26,16 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
 
         mStatus = (TextView) findViewById(R.id.status);
         mButton = (Button) findViewById(R.id.beginAuthentication);
+        Button useDialog = (Button) findViewById(R.id.useDialog);
+
+        if (useDialog != null) {
+            useDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FingerprintDialog.show(MainActivity.this, getString(R.string.app_name), 69);
+                }
+            });
+        }
     }
 
     @Override
@@ -111,5 +125,33 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
         });
 
         mStatus.setText(invalidKey ? R.string.status_scanning_new : R.string.status_scanning);
+    }
+
+    // Dialog calbacks
+
+    @Override
+    public void onFingerprintDialogAuthenticated() {
+        Toast.makeText(this, R.string.dialog_authenticated, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onFingerprintDialogVerifyPassword(final FingerprintDialog dialog, final String password) {
+        // Simulate server contact
+        mButton.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.notifyPasswordValidation(password.equals("aitorvs"));
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onFingerprintDialogStageUpdated(FingerprintDialog dialog, FingerprintDialog.Stage stage) {
+        Log.d(TAG, "Dialog stage: " + stage.name());
+    }
+
+    @Override
+    public void onFingerprintDialogCancelled() {
+        Toast.makeText(this, R.string.dialog_cancelled, Toast.LENGTH_SHORT).show();
     }
 }
