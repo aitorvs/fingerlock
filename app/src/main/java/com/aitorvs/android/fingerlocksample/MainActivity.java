@@ -12,8 +12,9 @@ import com.aitorvs.android.fingerlock.FingerLock;
 import com.aitorvs.android.fingerlock.FingerprintDialog;
 
 
-public class MainActivity extends AppCompatActivity implements FingerLock.FingerLockResultCallback
-        , FingerprintDialog.Callback {
+public class MainActivity extends AppCompatActivity
+        implements FingerLock.FingerLockResultCallback,
+        FingerprintDialog.Callback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private TextView mStatus;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
     protected void onPause() {
         super.onPause();
 
+        // unregister to stop receiving fingerprint events
         FingerLock.unregister(this);
     }
 
@@ -127,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
         mStatus.setText(invalidKey ? R.string.status_scanning_new : R.string.status_scanning);
     }
 
-    // Dialog calbacks
+    // Dialog callbacks
 
     @Override
     public void onFingerprintDialogAuthenticated() {
@@ -136,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements FingerLock.Finger
 
     @Override
     public void onFingerprintDialogVerifyPassword(final FingerprintDialog dialog, final String password) {
-        // Simulate server contact
+        // Simulate exchange with backend
         mButton.postDelayed(new Runnable() {
             @Override
             public void run() {

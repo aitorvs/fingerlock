@@ -82,7 +82,7 @@ public class FingerLock {
          */
         void stop();
 
-        void register(@NonNull Context context, @Nullable String keyName, @NonNull FingerLockResultCallback callback);
+        void register(@NonNull Context context, @Nullable final String keyName, @NonNull FingerLockResultCallback callback);
 
         /**
          * Call this method to avoid any memory leakage. Good place is <code>onPause</code>
@@ -122,7 +122,7 @@ public class FingerLock {
         }
 
         @Override
-        public void register(@NonNull Context context, @Nullable String keyName, @NonNull FingerLockResultCallback callback) {
+        public void register(@NonNull Context context, @Nullable final String keyName, @NonNull FingerLockResultCallback callback) {
             //noinspection ConstantConditions
             if (callback != null) {
                 // error out to inform the user
@@ -154,6 +154,7 @@ public class FingerLock {
 
         private static final String TAG = Api23FingerLockImpl.class.getSimpleName();
         protected Context mContext;
+        // FIXME: 25/05/16 make it an autovalue
         protected String mKeyName;
         protected FingerLockResultCallback mCallback;
 
@@ -197,10 +198,23 @@ public class FingerLock {
             } else if (mAuthenticationHandler != null && !mAuthenticationHandler.isReady()) {
                 // auth handler already listening...do nothing
             } else {
-                mCallback.onFingerLockScanning(KeyUtils.initCipher(mKeyName));
-                mAuthenticationHandler = new FingerprintAuthHandler(null, mCallback);
-                //noinspection MissingPermission
-                mAuthenticationHandler.start(mFingerprintManager);
+                try {
+                    mAuthenticationHandler = new FingerprintAuthHandler(null, mCallback);
+                    //noinspection MissingPermission
+                    mAuthenticationHandler.start(mFingerprintManager);
+
+                    mCallback.onFingerLockScanning(!KeyUtils.initCipher(mKeyName));
+                } catch (NullKeyException e) {
+                    // key is not yet created. Create it and retry
+                    KeyUtils.recreateKey(mKeyName);
+                    try {
+                        mCallback.onFingerLockScanning(!KeyUtils.initCipher(mKeyName));
+                    } catch (NullKeyException e1) {
+                        // something went wrong unregister and notify
+                        forceUnregister();
+                        mCallback.onFingerLockError(FINGERPRINT_UNRECOVERABLE_ERROR, new Exception("Key creation failed."));
+                    }
+                }
             }
         }
 
@@ -213,7 +227,7 @@ public class FingerLock {
         }
 
         @Override
-        public void register(@NonNull Context context, @Nullable String keyName, @NonNull FingerLockResultCallback callback) {
+        public void register(@NonNull Context context, @Nullable final String keyName, @NonNull FingerLockResultCallback callback) {
             // double check
             //noinspection ConstantConditions
             if (context == null || callback == null) {
@@ -241,11 +255,12 @@ public class FingerLock {
                 callback.onFingerLockError(FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
             } else {
                 // all systems Go!
-                if (KeyUtils.recreateKey(keyName)) {
-                    callback.onFingerLockReady();
-                } else {
-                    callback.onFingerLockError(FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
-                }
+                callback.onFingerLockReady();
+//                if (KeyUtils.recreateKey(keyName)) {
+//                    callback.onFingerLockReady();
+//                } else {
+//                    callback.onFingerLockError(FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
+//                }
             }
         }
 
@@ -374,7 +389,7 @@ public class FingerLock {
             return mKeyGenerator == null || mKeyStore == null || mCipher == null;
         }
 
-        public static boolean initCipher(@Nullable String keyName) {
+        public static boolean initCipher(@Nullable final String keyName) throws NullKeyException {
             if (invalidKeyStore()) {
                 Log.w(TAG, "initCipher: Invalid keystore");
                 return false;
@@ -384,6 +399,11 @@ public class FingerLock {
             try {
                 mKeyStore.load(null);
                 SecretKey secretKey = (SecretKey) mKeyStore.getKey(keyName, null);
+                if (secretKey == null) {
+                    // the key has not been created. Notify so that it can be created for the first
+                    // time
+                    throw new NullKeyException();
+                }
                 mCipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
                 return true;
@@ -489,5 +509,8 @@ public class FingerLock {
     public static final int FINGERPRINT_REGISTRATION_NEEDED = 3;
     public static final int FINGERPRINT_ERROR_HELP = 5;
     public static final int FINGERPRINT_UNRECOVERABLE_ERROR = 6;
+
+    private static class NullKeyException extends Exception {
+    }
 
 }
