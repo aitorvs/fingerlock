@@ -46,7 +46,7 @@ dependencies {
 }
 ```
 
-# FingerLock in 4 steps
+# (Core) FingerLock in 4 steps
 
 ####1. Register your fingerprint listener component (recommended to use `onResume`)
 
@@ -88,27 +88,55 @@ It is as simple as calling the `start()` method.
 
 ####3. Handle the callbacks
 
+**Library is ready.**
+This method is called when the library finishes the registration process successfully.
+
 ```java
     @Override
     public void onFingerLockReady() {
         // Called right after registration if the device supports fingerprint authentication.
         // This is normally a good place to call FingerLock.start()
     }
+```
 
+This is normally a good place to call `FingerLock.start()` so start the fingerprint(s) scanning process.
+
+
+**Fingerprint(s) Scanning.**
+
+```java
     @Override
     public void onFingerLockScanning(boolean invalidKey) {
         // Called to notify the fingerprint scanning is started successfully as a result of FingerLock.start()
         // The 'invalidKey' parameter will be true when the key is no longer valid. This happens when
         // the user disables the lock screen, resets or adds a new fingerprint after the key was created (i.e. FingerLock.register())
-        //
-        // When this happens it is recommended to recreate the key callking FingerLock.recreate(this) method
     }
+```
 
+The callback `onFingerLockScanning(boolean)` is called when the library has started
+scanning for fingerprint(s) to authenticate the user. The input parameter `invalidKey` flags when the key provided
+during registration is no longer valid. Either because the user disabled the lock screen, device reset or
+a new fingerprint was added.
+For security purposes it is recommended to stop scanning fingerpring(s) calling `FingerLock.stop()` and
+fallback to any other type of authentication (i.e. password) that authenticates the user and let
+them use fingerprint the next time.
+
+**Authenticated.**
+
+```java
     @Override
     public void onFingerLockAuthenticationSucceeded() {
         // Called when the user fingerprint has been correctly authenticated
     }
+```
 
+This method is called upon successful fingerprint authentication.
+
+**Error.**
+
+The callback provides error events that may happen throughout the fingerprint authentication process.
+
+```java
     @Override
     public void onFingerLockError(@FingerLock.FingerLockErrorState int errorType, Exception e) {
         // Called every time there's an error at any stage during the authentication
@@ -139,15 +167,6 @@ It is as simple as calling the `start()` method.
     }
 ```
 
-The callback `onFingerLockScanning(boolean)` is called when the library has started
-scanning for fingerprint(s) to authenticate the user. The input parameter `invalidKey` flags when the key provided
-during registration is no longer valid. Either because the user disabled the lock screen, device reset or
-a new fingerprint was added.
-
-For security purposes it is recommended to stop scanning fingerpring(s) calling `FingerLock.stop()` and
-fallback to any other type of authentication (i.e. password) that authenticates the user and let
-them use fingerprint the next time.
-
 ####4. Unregister when done
 
 Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
@@ -161,3 +180,6 @@ Ensure to unregister the component to avoid memory leaks (recommended to be done
         FingerLock.unregister(this);
     }
 ```
+
+# Dialog extension
+
