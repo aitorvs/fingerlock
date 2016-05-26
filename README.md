@@ -189,8 +189,6 @@ The *dialog* extension module provides an out-of-the-box-ready material design d
 that follows the design rules for fingerprint authentication and handles the core library module for
 you.
 
-## (Dialog) FingerLock in 3 steps
-
 ```java
 public class MainActivity extends AppCompatActivity implements FingerprintDialog.Callback {
 
@@ -238,6 +236,8 @@ public class MainActivity extends AppCompatActivity implements FingerprintDialog
     }
 }
 ```
+
+## (Dialog) FingerLock in 3 steps
 
 ### 1. Implement the dialog callbacks
 
