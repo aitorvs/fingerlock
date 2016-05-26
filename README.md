@@ -297,6 +297,8 @@ The third parameter is a positive integer value that represents a request code.
 Called when password verification is required. Either because triggered automatically when the provided
 key is no longer valid or because the user required so.
 
+Once the password is verified, notify the dialog calling `dialog.notifyPasswordValidation(boolean)`.
+
 ####State updated
 
 ```java
