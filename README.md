@@ -6,7 +6,8 @@ depending on this library will automatically depend on Material Dialogs.
 
 # Gradle Dependency
 
-[![Release](https://img.shields.io/github/release/aitorvs/fingerlock.svg?label=jitpack)](https://jitpack.io/#aitorvs/fingerlock)
+[![](https://jitpack.io/v/com.github.aitorvs.fingerlock/core.svg)](https://jitpack.io/#com.github.aitorvs.fingerlock/core)
+[![](https://jitpack.io/v/com.github.aitorvs.fingerlock/dialog.svg)](https://jitpack.io/#com.github.aitorvs.fingerlock/dialog)
 
 ##Repository
 
