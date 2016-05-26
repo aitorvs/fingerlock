@@ -97,7 +97,11 @@ It is as simple as calling the `start()` method.
 
     @Override
     public void onFingerLockScanning(boolean invalidKey) {
-        // Called to notify the fingerprint scanning is started successfully as a result of `start()
+        // Called to notify the fingerprint scanning is started successfully as a result of FingerLock.start()
+        // The 'invalidKey' parameter will be true when the key is no longer valid. This happens when
+        // the user disables the lock screen, resets or adds a new fingerprint after the key was created (i.e. FingerLock.register())
+        //
+        // When this happens it is recommended to recreate the key callking FingerLock.recreate(this) method
     }
 
     @Override
@@ -134,6 +138,12 @@ It is as simple as calling the `start()` method.
         }
     }
 ```
+
+The callback `public void onFingerLockScanning(boolean invalidKey)` is called when the library has started
+scanning for fingerprint to authenticate the user. The input parameter `invalidKey` flags when the key provided
+during registration is no longer valid. Either because the user disable the lock screen, device reset or
+a new fingerprint was added. At this point and for security purposes it is recommended to recreate the key
+calling the method `FingerLock.recreateKey(this)`.
 
 ####4. Unregister when done
 
