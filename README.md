@@ -48,6 +48,9 @@ dependencies {
 ```
 # Core
 
+The core module requires Android M and above and also a device supporting fingerprint sensor. If you target
+devices before M or not having fingerprint sensors, use the dialog extension.
+
 ## (Core) FingerLock in 4 steps
 
 ###1. Register your fingerprint listener component (recommended to use `onResume`)
@@ -189,6 +192,9 @@ Ensure to unregister the component to avoid memory leaks (recommended to be done
 The *dialog* extension module provides an out-of-the-box-ready material design dialog implementation
 that follows the design rules for fingerprint authentication and handles the core library module for
 you.
+The dialog extension **automatically falls back to password authentication** when the device does not 
+support fingerprint authentication.
+
 
 ```java
 public class MainActivity extends AppCompatActivity implements FingerprintDialog.Callback {
