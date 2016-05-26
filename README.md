@@ -48,7 +48,7 @@ dependencies {
 
 # FingerLock in 4 steps
 
-1. Register your fingerprint listener component (recommended to use `onResume`)
+####1. Register your fingerprint listener component (recommended to use `onResume`)
 
 ```java
     @Override
@@ -64,7 +64,7 @@ The first parameter is the `Context`. It can be either the caller context but al
 The shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
 The last parameter is the callback where the fingerprint events will land on.
 
-2. Start the fingerprint scanning
+####2. Start the fingerprint scanning
 
 It is as simple as calling the `start()` method.
 
@@ -72,7 +72,7 @@ It is as simple as calling the `start()` method.
 FingerLock.start()
 ```
 
-3. Handle the callbacks
+####3. Handle the callbacks
 
 ```java
     @Override
@@ -121,7 +121,7 @@ FingerLock.start()
     }
 ```
 
-4. Unregister when done
+####4. Unregister when done
 
 Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
 
