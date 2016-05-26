@@ -46,4 +46,92 @@ dependencies {
 }
 ```
 
+# FingerLock in 4 steps
 
+1. Register your fingerprint listener component (recommended to use `onResume`)
+
+```
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // register and use a key to increase security
+        FingerLock.register(this, KEY_NAME, this);
+    }
+```
+
+The first parameter is the `Context`. It can be either the caller context but also application context.
+The shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
+The last parameter is the callback where the fingerprint events will land on.
+
+2. Start the fingerprint scanning
+
+It is as simple as calling the `start()` method.
+
+```
+FingerLock.start()
+```
+
+3. Handle the callbacks
+
+```
+
+    @Override
+    public void onFingerLockReady() {
+        // Called right after registration if the device supports fingerprint authentication.
+        // This is normally a good place to call FingerLock.start()
+    }
+
+    @Override
+    public void onFingerLockScanning(boolean invalidKey) {
+        // Called to notify the fingerprint scanning is started successfully as a result of `start()
+    }
+
+    @Override
+    public void onFingerLockAuthenticationSucceeded() {
+        // Called when the user fingerprint has been correctly authenticated
+    }
+
+    @Override
+    public void onFingerLockError(@FingerLock.FingerLockErrorState int errorType, Exception e) {
+        // Called every time there's an error at any stage during the authentication
+
+        switch (errorType) {
+            case FingerLock.FINGERPRINT_PERMISSION_DENIED:
+                // USE_PERMISSION is denied by the user, fallback to password authentication
+                break;
+            case FingerLock.FINGERPRINT_ERROR_HELP:
+                // there's some kind of recoverable error that can be solved. Call e.getMessage()
+                // to get help about the error
+                break;
+            case FingerLock.FINGERPRINT_NOT_RECOGNIZED:
+                // The fingerprint was not recognized, try another one
+                break;
+            case FingerLock.FINGERPRINT_NOT_SUPPORTED:
+                // Fingerprint authentication is not supported by the device. Fallback to password
+                // authentication
+                break;
+            case FingerLock.FINGERPRINT_REGISTRATION_NEEDED:
+                // There are no fingerprints registered in this device.
+                // Go to Settings -> Security -> Fingerprint and register at least one
+                break;
+            case FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR:
+                // Unrecoverable internal error occurred. Unregister and register back
+                break;
+        }
+    }
+```
+
+4. Unregister when done
+
+Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
+```
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        // unregister to stop receiving fingerprint events
+        FingerLock.unregister(this);
+    }
+```
