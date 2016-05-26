@@ -69,7 +69,21 @@ The last parameter is the callback where the fingerprint events will land on.
 It is as simple as calling the `start()` method.
 
 ```java
-FingerLock.start()
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // ... Some code here
+
+
+        mButton = (Button) findViewById(R.id.button_authenticate);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FingerLock.start();
+            }
+        });
+
+        // ... Some more code here
+    }
 ```
 
 ####3. Handle the callbacks
