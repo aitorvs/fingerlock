@@ -64,11 +64,11 @@ public class FingerprintDialog extends DialogFragment
     public FingerprintDialog() {
     }
 
-    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, String keyName, int requestCode) {
+    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, @NonNull String keyName, int requestCode) {
         return show(context, keyName, requestCode, true);
     }
 
-    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, String keyName, int requestCode, boolean cancelable) {
+    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, @NonNull String keyName, int requestCode, boolean cancelable) {
         FingerprintDialog dialog = getVisible(context);
         if (dialog != null)
             dialog.dismiss();
@@ -319,7 +319,7 @@ public class FingerprintDialog extends DialogFragment
         @Override
         public void run() {
             if (getActivity() == null) return;
-            mFingerprintStatus.setTextColor(Utils.resolveColor(getActivity(), android.R.attr.textColorSecondary));
+            mFingerprintStatus.setTextColor(ColorAttr.getColor(getActivity(), android.R.attr.textColorSecondary));
             mFingerprintStatus.setText(getResources().getString(R.string.fingerprint_hint));
             mFingerprintIcon.setImageResource(R.drawable.ic_fp_40px);
         }
