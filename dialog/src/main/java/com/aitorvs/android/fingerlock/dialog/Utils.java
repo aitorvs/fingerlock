@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.dialog;
 
 import android.content.Context;
 import android.content.res.TypedArray;

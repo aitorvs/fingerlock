@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aitorvs.android.fingerlock.FingerLock;
-import com.aitorvs.android.fingerlock.FingerprintDialog;
+import com.aitorvs.android.fingerlock.dialog.FingerprintDialog;
 
 
 public class MainActivity extends AppCompatActivity

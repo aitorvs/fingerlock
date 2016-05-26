@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.dialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
+import com.aitorvs.android.fingerlock.FingerLock;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
