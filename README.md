@@ -50,7 +50,7 @@ dependencies {
 
 1. Register your fingerprint listener component (recommended to use `onResume`)
 
-```
+```java
     @Override
     protected void onResume() {
         super.onResume();
@@ -68,14 +68,13 @@ The last parameter is the callback where the fingerprint events will land on.
 
 It is as simple as calling the `start()` method.
 
-```
+```java
 FingerLock.start()
 ```
 
 3. Handle the callbacks
 
-```
-
+```java
     @Override
     public void onFingerLockReady() {
         // Called right after registration if the device supports fingerprint authentication.
@@ -125,8 +124,8 @@ FingerLock.start()
 4. Unregister when done
 
 Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
-```
 
+```java
     @Override
     protected void onPause() {
         super.onPause();
