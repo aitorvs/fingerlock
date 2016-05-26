@@ -45,10 +45,11 @@ dependencies {
     compile 'com.github.aitorvs.fingerlock:dialog::x.x.x'
 }
 ```
+# Core
 
-# (Core) FingerLock in 4 steps
+## (Core) FingerLock in 4 steps
 
-####1. Register your fingerprint listener component (recommended to use `onResume`)
+###1. Register your fingerprint listener component (recommended to use `onResume`)
 
 ```java
     @Override
@@ -61,10 +62,10 @@ dependencies {
 ```
 
 The first parameter is the `Context`. It can be either the caller context but also application context.
-The shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
+The second parameter shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
 The last parameter is the callback where the fingerprint events will land on.
 
-####2. Start the fingerprint scanning
+###2. Start the fingerprint scanning
 
 It is as simple as calling the `start()` method.
 
@@ -86,10 +87,9 @@ It is as simple as calling the `start()` method.
     }
 ```
 
-####3. Handle the callbacks
+###3. Handle the callbacks
 
-**Library is ready.**
-This method is called when the library finishes the registration process successfully.
+####Library is ready
 
 ```java
     @Override
@@ -99,10 +99,12 @@ This method is called when the library finishes the registration process success
     }
 ```
 
+This method is called when the library finishes the registration process successfully.
+
 This is normally a good place to call `FingerLock.start()` so start the fingerprint(s) scanning process.
 
 
-**Fingerprint(s) Scanning.**
+####Fingerprint(s) Scanning
 
 ```java
     @Override
@@ -121,7 +123,7 @@ For security purposes it is recommended to stop scanning fingerpring(s) calling 
 fallback to any other type of authentication (i.e. password) that authenticates the user and let
 them use fingerprint the next time.
 
-**Authenticated.**
+####Authenticated
 
 ```java
     @Override
@@ -132,7 +134,7 @@ them use fingerprint the next time.
 
 This method is called upon successful fingerprint authentication.
 
-**Error.**
+####Error
 
 The callback provides error events that may happen throughout the fingerprint authentication process.
 
@@ -167,7 +169,7 @@ The callback provides error events that may happen throughout the fingerprint au
     }
 ```
 
-####4. Unregister when done
+###4. Unregister when done
 
 Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
 
@@ -183,3 +185,107 @@ Ensure to unregister the component to avoid memory leaks (recommended to be done
 
 # Dialog extension
 
+The *dialog* extension module provides an out-of-the-box-ready material design dialog implementation
+that follows the design rules for fingerprint authentication and handles the core library module for
+you.
+
+## (Dialog) FingerLock in 3 steps
+
+### 1. Implement the dialog callbacks
+
+```java
+public class MainActivity extends AppCompatActivity
+        implements FingerprintDialog.Callback {
+    //...Looooots of code here
+
+}
+```
+
+### 2. Show the dialog
+
+```java
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        // ... some more code here
+
+
+        Button useDialog = (Button) findViewById(R.id.useDialog);
+
+        if (useDialog != null) {
+            useDialog.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    FingerprintDialog.show(MainActivity.this, KEY_NAME, REQUEST_CODE);
+                }
+            });
+        }
+    }
+```
+
+The first parameter is the `Context` of the caller or application context.
+The second parameter shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
+The third parameter is a positive integer value that represents a request code.
+
+### 3. Handle callbacks
+
+####Authenticated
+
+```java
+    @Override
+    public void onFingerprintDialogAuthenticated() {
+        // Authentication is successful
+    }
+```
+
+####Verify password
+
+```java
+    @Override
+    public void onFingerprintDialogVerifyPassword(final FingerprintDialog dialog, final String password) {
+        // Password verification has been requested. Use this method to verify the `password` passed
+        // as parameter against your backend
+
+        // Simulate exchange with backend
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.notifyPasswordValidation(password.equals("aitorvs"));
+            }
+        }, 1500);
+    }
+```
+
+Called when password verification is required. Either because triggered automatically when the provided
+key is no longer valid or because the user required so.
+
+####State updated
+
+```java
+    @Override
+    public void onFingerprintDialogStageUpdated(FingerprintDialog dialog, FingerprintDialog.Stage stage) {
+        Log.d(TAG, "Dialog stage: " + stage.name());
+    }
+```
+
+Method called at every internal stage change. Possible states are:
+
+```java
+    public enum Stage {
+        FINGERPRINT,        // fingerprint authentication allowed
+        KEY_INVALIDATED,    // key invalidated, password to be required
+        PASSWORD            // password authentication selected by the user
+    }
+```
+
+It is normally not necessary to act on any of the stages.
+
+####Authentication cancelled
+
+Called when the user cancels the authentication dialog.
+
+```java
+    @Override
+    public void onFingerprintDialogCancelled() {
+        Toast.makeText(this, R.string.dialog_cancelled, Toast.LENGTH_SHORT).show();
+    }
+```

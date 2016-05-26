@@ -1,6 +1,7 @@
 package com.aitorvs.android.fingerlocksample;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -140,7 +141,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFingerprintDialogVerifyPassword(final FingerprintDialog dialog, final String password) {
         // Simulate exchange with backend
-        mButton.postDelayed(new Runnable() {
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 dialog.notifyPasswordValidation(password.equals("aitorvs"));

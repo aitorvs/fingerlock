@@ -232,7 +232,7 @@ public class FingerprintDialog extends DialogFragment
         toggleButtonsEnabled(true);
 
         if (valid) {
-            if (mStage == Stage.NEW_FINGERPRINT_ENROLLED &&
+            if (mStage == Stage.KEY_INVALIDATED &&
                     mUseFingerprintFutureCheckBox.isChecked()) {
                 // Re-create the key so that fingerprints including new ones are validated.
                 FingerLock.recreateKey(this);
@@ -272,14 +272,14 @@ public class FingerprintDialog extends DialogFragment
                 mFingerprintContent.setVisibility(View.VISIBLE);
                 mBackupContent.setVisibility(View.GONE);
                 break;
-            case NEW_FINGERPRINT_ENROLLED:
+            case KEY_INVALIDATED:
                 // Intentional fall through
             case PASSWORD:
                 dialog.setActionButton(DialogAction.POSITIVE, android.R.string.cancel);
                 dialog.setActionButton(DialogAction.NEGATIVE, android.R.string.ok);
                 mFingerprintContent.setVisibility(View.GONE);
                 mBackupContent.setVisibility(View.VISIBLE);
-                if (mStage == Stage.NEW_FINGERPRINT_ENROLLED) {
+                if (mStage == Stage.KEY_INVALIDATED) {
                     // Fingerprint is not used anymore. Stop listening for it.
                     FingerLock.stop();
                     mPasswordDescriptionTextView.setVisibility(View.GONE);
@@ -304,7 +304,7 @@ public class FingerprintDialog extends DialogFragment
      */
     public enum Stage {
         FINGERPRINT,
-        NEW_FINGERPRINT_ENROLLED,
+        KEY_INVALIDATED,
         PASSWORD
     }
 
@@ -384,7 +384,7 @@ public class FingerprintDialog extends DialogFragment
     public void onFingerLockScanning(boolean invalidKey) {
         mFingerprintStatus.setText(R.string.fingerprint_hint);
         if (invalidKey)
-            mStage = Stage.NEW_FINGERPRINT_ENROLLED;
+            mStage = Stage.KEY_INVALIDATED;
         updateStage(null);
 
     }
