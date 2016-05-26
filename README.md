@@ -236,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements FingerprintDialog
     public void onFingerprintDialogCancelled() {
         Toast.makeText(this, R.string.dialog_cancelled, Toast.LENGTH_SHORT).show();
     }
+}
 ```
 
 ### 1. Implement the dialog callbacks
