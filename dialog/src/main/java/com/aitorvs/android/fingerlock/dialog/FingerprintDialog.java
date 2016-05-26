@@ -280,6 +280,8 @@ public class FingerprintDialog extends DialogFragment
                 mFingerprintContent.setVisibility(View.GONE);
                 mBackupContent.setVisibility(View.VISIBLE);
                 if (mStage == Stage.NEW_FINGERPRINT_ENROLLED) {
+                    // Fingerprint is not used anymore. Stop listening for it.
+                    FingerLock.stop();
                     mPasswordDescriptionTextView.setVisibility(View.GONE);
                     mNewFingerprintEnrolledTextView.setVisibility(View.VISIBLE);
                     mUseFingerprintFutureCheckBox.setVisibility(View.VISIBLE);
