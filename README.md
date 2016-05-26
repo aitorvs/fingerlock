@@ -191,6 +191,53 @@ you.
 
 ## (Dialog) FingerLock in 3 steps
 
+```java
+public class MainActivity extends AppCompatActivity implements FingerprintDialog.Callback {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // show fingerprint dialog
+        FingerprintDialog.show(MainActivity.this, KEY_NAME, REQUEST_CODE);
+    }
+
+    @Override
+    public void onFingerprintDialogAuthenticated() {
+        // Authentication is successful
+    }
+
+    @Override
+    public void onFingerprintDialogVerifyPassword(final FingerprintDialog dialog, final String password) {
+        // Password verification has been requested. Use this method to verify the `password` passed
+        // as parameter against your backend
+
+        // Simulate exchange with backend
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.notifyPasswordValidation(password.equals("aitorvs"));
+            }
+        }, 1500);
+    }
+
+    @Override
+    public void onFingerprintDialogStageUpdated(FingerprintDialog dialog, FingerprintDialog.Stage stage) {
+        Log.d(TAG, "Dialog stage: " + stage.name());
+    }
+
+    public enum Stage {
+        FINGERPRINT,        // fingerprint authentication allowed
+        KEY_INVALIDATED,    // key invalidated, password to be required
+        PASSWORD            // password authentication selected by the user
+    }
+
+    @Override
+    public void onFingerprintDialogCancelled() {
+        Toast.makeText(this, R.string.dialog_cancelled, Toast.LENGTH_SHORT).show();
+    }
+```
+
 ### 1. Implement the dialog callbacks
 
 ```java
@@ -206,19 +253,10 @@ public class MainActivity extends AppCompatActivity
 ```java
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // ... some more code here
+        super.onCreate(savedInstanceState);
 
-
-        Button useDialog = (Button) findViewById(R.id.useDialog);
-
-        if (useDialog != null) {
-            useDialog.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    FingerprintDialog.show(MainActivity.this, KEY_NAME, REQUEST_CODE);
-                }
-            });
-        }
+        // show fingerprint dialog
+        FingerprintDialog.show(MainActivity.this, KEY_NAME, REQUEST_CODE);
     }
 ```
 
