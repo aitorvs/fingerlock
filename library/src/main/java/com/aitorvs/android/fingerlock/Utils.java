@@ -7,7 +7,7 @@ import android.support.annotation.AttrRes;
 /**
  * @author Aidan Follestad (afollestad)
  */
-class Utils {
+class Utils{
 
     public static int resolveColor(Context context, @AttrRes int attr) {
         return resolveColor(context, attr, 0);

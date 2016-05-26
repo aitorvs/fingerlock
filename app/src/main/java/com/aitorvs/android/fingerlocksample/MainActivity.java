@@ -17,6 +17,7 @@ public class MainActivity extends AppCompatActivity
         FingerprintDialog.Callback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String KEY_NAME = "FingerLockAppKey";
     private TextView mStatus;
     private Button mButton;
 
@@ -33,7 +34,7 @@ public class MainActivity extends AppCompatActivity
             useDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FingerprintDialog.show(MainActivity.this, getString(R.string.app_name), 69);
+                    FingerprintDialog.show(MainActivity.this, KEY_NAME, 69);
                 }
             });
         }
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         // register and use a key to increase security
-        FingerLock.register(this, getString(R.string.app_name), this);
+        FingerLock.register(this, KEY_NAME, this);
     }
 
     @Override

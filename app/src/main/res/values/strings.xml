@@ -7,7 +7,7 @@
     <string name="start_scanning">Start scanning</string>
     <string name="status_ready">Ready to authenticate</string>
     <string name="status_scanning">Scanning fingerprint</string>
-    <string name="status_scanning_new">Scanning fingerprint (new)</string>
+    <string name="status_scanning_new">Scanning fingerprint (invalid key)</string>
     <string name="status_authenticated">Authenticated</string>
     <string name="status_error">Error: %1$s</string>
     <string name="dialog_authenticated">Authenticated using dialog</string>

@@ -234,7 +234,7 @@ public class FingerprintDialog extends DialogFragment
             if (mStage == Stage.NEW_FINGERPRINT_ENROLLED &&
                     mUseFingerprintFutureCheckBox.isChecked()) {
                 // Re-create the key so that fingerprints including new ones are validated.
-                FingerLock.recreateKey();
+                FingerLock.recreateKey(this);
                 mStage = Stage.FINGERPRINT;
             }
             mPassword.setText("");
