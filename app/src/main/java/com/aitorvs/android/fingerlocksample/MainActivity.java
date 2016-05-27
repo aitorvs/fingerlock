@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity
             public void run() {
                 dialog.notifyPasswordValidation(password.equals("aitorvs"));
             }
-        }, 1500);
+        }, 1000);
     }
 
     @Override
