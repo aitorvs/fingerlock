@@ -8,6 +8,7 @@ depending on this library will automatically depend on Material Dialogs.
 
 [![](https://jitpack.io/v/com.github.aitorvs.fingerlock/core.svg)](https://jitpack.io/#com.github.aitorvs.fingerlock/core)
 [![](https://jitpack.io/v/com.github.aitorvs.fingerlock/dialog.svg)](https://jitpack.io/#com.github.aitorvs.fingerlock/dialog)
+[![Build Status](https://travis-ci.org/aitorvs/fingerlock.svg)](https://travis-ci.org/aitorvs/fingerlock)
 
 ##Repository
 
