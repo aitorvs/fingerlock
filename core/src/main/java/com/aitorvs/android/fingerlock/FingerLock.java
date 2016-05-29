@@ -191,7 +191,7 @@ public final class FingerLock {
         public void start() {
             if (!isFingerprintAuthSupported()) {
                 mCallback.onFingerLockError(FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
-            } else if (mAuthenticationHandler != null && !mAuthenticationHandler.isReady()) {
+            } else if (mAuthenticationHandler != null && mAuthenticationHandler.isStarted()) {
                 // auth handler already listening...do nothing
             } else {
                 try {

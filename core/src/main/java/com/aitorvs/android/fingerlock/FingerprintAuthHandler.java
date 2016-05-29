@@ -42,6 +42,11 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
         return mCancellationSignal == null;
     }
 
+    public boolean isStarted() {
+        // authentication already started and scanning
+        return mCancellationSignal != null;
+    }
+
     @RequiresPermission(Manifest.permission.USE_FINGERPRINT)
     public void start(FingerprintManager fpm) {
         if (fpm == null || mCallback == null) {
