@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Fingerlock by aitorvs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Fingerlock</h1>
+      <h2 class="project-tagline">Android fingerprint authentication library</h2>
+      <a href="https://github.com/aitorvs/fingerlock" class="btn">View on GitHub</a>
+      <a href="https://github.com/aitorvs/fingerlock/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/aitorvs/fingerlock/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="fingerlock" class="anchor" href="#fingerlock" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>FingerLock</h1>
+
+<p>FingerLock is a library designed to make fingerprint authentication an easy task for Android developers.</p>
+
+<p><strong>Note</strong>: this library is powered by <a href="https://github.com/afollestad/material-dialogs">material-dialogs</a>,
+depending on this library will automatically depend on Material Dialogs.</p>
+
+<h1>
+<a id="gradle-dependency" class="anchor" href="#gradle-dependency" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Gradle Dependency</h1>
+
+<p><a href="https://jitpack.io/#com.github.aitorvs.fingerlock/core"><img src="https://jitpack.io/v/com.github.aitorvs.fingerlock/core.svg" alt=""></a>
+<a href="https://jitpack.io/#com.github.aitorvs.fingerlock/dialog"><img src="https://jitpack.io/v/com.github.aitorvs.fingerlock/dialog.svg" alt=""></a>
+<a href="https://travis-ci.org/aitorvs/fingerlock"><img src="https://travis-ci.org/aitorvs/fingerlock.svg" alt="Build Status"></a></p>
+
+<h2>
+<a id="repository" class="anchor" href="#repository" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Repository</h2>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">repositories</span> {
+    maven { url <span class="pl-s"><span class="pl-pds">"</span>https://jitpack.io<span class="pl-pds">"</span></span> }
+}</pre></div>
+
+<h2>
+<a id="dependencies" class="anchor" href="#dependencies" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dependencies</h2>
+
+<h3>
+<a id="core" class="anchor" href="#core" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Core</h3>
+
+<p>The <em>core</em> module contains the core class <code>FingerLock</code> to perform full fingerprint authentication.</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
+
+    <span class="pl-c">// ... other dependencies here</span>
+
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:core:0.1.0<span class="pl-pds">'</span></span>
+}</pre></div>
+
+<h3>
+<a id="fingerprint-dialog-extension" class="anchor" href="#fingerprint-dialog-extension" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fingerprint Dialog Extension</h3>
+
+<p>The <em>dialog</em> extension module is powered by <a href="https://github.com/afollestad/material-dialogs">material-dialogs</a>
+library and provides an out-of-the-box-ready material authentication dialog based on the design guidelines on fingerprint
+authentication.</p>
+
+<div class="highlight highlight-source-groovy-gradle"><pre><span class="pl-en">dependencies</span> {
+
+    <span class="pl-c">// ... other dependencies here</span>
+
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:dialog:0.1.0<span class="pl-pds">'</span></span>
+}</pre></div>
+
+<h1>
+<a id="core-1" class="anchor" href="#core-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Core</h1>
+
+<p>The core module requires Android M and above and also a device supporting fingerprint sensor. If you target
+devices before M or not having fingerprint sensors, use the dialog extension.</p>
+
+<h2>
+<a id="core-fingerlock-in-4-steps" class="anchor" href="#core-fingerlock-in-4-steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>(Core) FingerLock in 4 steps</h2>
+
+<h3>
+<a id="1-register-your-fingerprint-listener-component-recommended-to-use-onresume" class="anchor" href="#1-register-your-fingerprint-listener-component-recommended-to-use-onresume" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Register your fingerprint listener component (recommended to use <code>onResume</code>)</h3>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> onResume() {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onResume();
+
+        <span class="pl-c">// register and use a key to increase security</span>
+        <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>register(<span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>, <span class="pl-v">this</span>);
+    }</pre></div>
+
+<p>The first parameter is the <code>Context</code>. It can be either the caller context but also application context.
+The second parameter shall be a unique non-empty <code>String</code> that severs as the key name for the encryption cipher.
+The last parameter is the callback where the fingerprint events will land on.</p>
+
+<h3>
+<a id="2-start-the-fingerprint-scanning" class="anchor" href="#2-start-the-fingerprint-scanning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Start the fingerprint scanning</h3>
+
+<p>It is as simple as calling the <code>start()</code> method.</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> onCreate(<span class="pl-smi">Bundle</span> savedInstanceState) {
+        <span class="pl-c">// ... Some code here</span>
+
+
+        mButton <span class="pl-k">=</span> (<span class="pl-smi">Button</span>) findViewById(<span class="pl-smi">R</span><span class="pl-k">.</span>id<span class="pl-k">.</span>button_authenticate);
+        mButton<span class="pl-k">.</span>setOnClickListener(<span class="pl-k">new</span> <span class="pl-smi">View</span>.<span class="pl-smi">OnClickListener</span>() {
+            <span class="pl-k">@Override</span>
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onClick</span>(<span class="pl-smi">View</span> <span class="pl-v">v</span>) {
+                <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>start();
+            }
+        });
+
+        <span class="pl-c">// ... Some more code here</span>
+    }</pre></div>
+
+<h3>
+<a id="3-handle-the-callbacks" class="anchor" href="#3-handle-the-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Handle the callbacks</h3>
+
+<h4>
+<a id="library-is-ready" class="anchor" href="#library-is-ready" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Library is ready</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerLockReady() {
+        <span class="pl-c">// Called right after registration if the device supports fingerprint authentication.</span>
+        <span class="pl-c">// This is normally a good place to call FingerLock.start()</span>
+    }</pre></div>
+
+<p>This method is called when the library finishes the registration process successfully.</p>
+
+<p>This is normally a good place to call <code>FingerLock.start()</code> so start the fingerprint(s) scanning process.</p>
+
+<h4>
+<a id="fingerprints-scanning" class="anchor" href="#fingerprints-scanning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Fingerprint(s) Scanning</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerLockScanning(<span class="pl-k">boolean</span> invalidKey) {
+        <span class="pl-c">// Called to notify the fingerprint scanning is started successfully as a result of FingerLock.start()</span>
+        <span class="pl-c">// The 'invalidKey' parameter will be true when the key is no longer valid. This happens when</span>
+        <span class="pl-c">// the user disables the lock screen, resets or adds a new fingerprint after the key was created (i.e. FingerLock.register())</span>
+    }</pre></div>
+
+<p>The callback <code>onFingerLockScanning(boolean)</code> is called when the library has started
+scanning for fingerprint(s) to authenticate the user. The input parameter <code>invalidKey</code> flags when the key provided
+during registration is no longer valid. Either because the user disabled the lock screen, device reset or
+a new fingerprint was added.
+For security purposes it is recommended to stop scanning fingerpring(s) calling <code>FingerLock.stop()</code> and
+fallback to any other type of authentication (i.e. password) that authenticates the user and let
+them use fingerprint the next time.</p>
+
+<h4>
+<a id="authenticated" class="anchor" href="#authenticated" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authenticated</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerLockAuthenticationSucceeded() {
+        <span class="pl-c">// Called when the user fingerprint has been correctly authenticated</span>
+    }</pre></div>
+
+<p>This method is called upon successful fingerprint authentication.</p>
+
+<h4>
+<a id="error" class="anchor" href="#error" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Error</h4>
+
+<p>The callback provides error events that may happen throughout the fingerprint authentication process.</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerLockError(@<span class="pl-smi">FingerLock</span><span class="pl-k">.</span><span class="pl-smi">FingerLockErrorState</span> <span class="pl-k">int</span> errorType, <span class="pl-smi">Exception</span> e) {
+        <span class="pl-c">// Called every time there's an error at any stage during the authentication</span>
+
+        <span class="pl-k">switch</span> (errorType) {
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_PERMISSION_DENIED</span><span class="pl-k">:</span>
+                <span class="pl-c">// USE_PERMISSION is denied by the user, fallback to password authentication</span>
+                <span class="pl-k">break</span>;
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_ERROR_HELP</span><span class="pl-k">:</span>
+                <span class="pl-c">// there's some kind of recoverable error that can be solved. Call e.getMessage()</span>
+                <span class="pl-c">// to get help about the error</span>
+                <span class="pl-k">break</span>;
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_NOT_RECOGNIZED</span><span class="pl-k">:</span>
+                <span class="pl-c">// The fingerprint was not recognized, try another one</span>
+                <span class="pl-k">break</span>;
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_NOT_SUPPORTED</span><span class="pl-k">:</span>
+                <span class="pl-c">// Fingerprint authentication is not supported by the device. Fallback to password</span>
+                <span class="pl-c">// authentication</span>
+                <span class="pl-k">break</span>;
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_REGISTRATION_NEEDED</span><span class="pl-k">:</span>
+                <span class="pl-c">// There are no fingerprints registered in this device.</span>
+                <span class="pl-c">// Go to Settings -&gt; Security -&gt; Fingerprint and register at least one</span>
+                <span class="pl-k">break</span>;
+            <span class="pl-k">case</span> <span class="pl-smi">FingerLock</span><span class="pl-c1"><span class="pl-k">.</span>FINGERPRINT_UNRECOVERABLE_ERROR</span><span class="pl-k">:</span>
+                <span class="pl-c">// Unrecoverable internal error occurred. Unregister and register back</span>
+                <span class="pl-k">break</span>;
+        }
+    }</pre></div>
+
+<h3>
+<a id="4-unregister-when-done" class="anchor" href="#4-unregister-when-done" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Unregister when done</h3>
+
+<p>Ensure to unregister the component to avoid memory leaks (recommended to be done in <code>onPause()</code>)</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> onPause() {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onPause();
+
+        <span class="pl-c">// unregister to stop receiving fingerprint events</span>
+        <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>unregister(<span class="pl-v">this</span>);
+    }</pre></div>
+
+<h1>
+<a id="dialog-extension" class="anchor" href="#dialog-extension" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dialog extension</h1>
+
+<p>The <em>dialog</em> extension module provides an out-of-the-box-ready material design dialog implementation
+that follows the design rules for fingerprint authentication and handles the core library module for
+you.
+The dialog extension <strong>automatically falls back to password authentication</strong> when the device does not 
+support fingerprint authentication.</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MainActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AppCompatActivity</span> <span class="pl-k">implements</span> <span class="pl-e">FingerprintDialog</span>.<span class="pl-e">Callback</span> {
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> <span class="pl-en">onCreate</span>(<span class="pl-smi">Bundle</span> <span class="pl-v">savedInstanceState</span>) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+
+        <span class="pl-c">// show fingerprint dialog</span>
+        <span class="pl-smi">FingerprintDialog</span><span class="pl-k">.</span>show(<span class="pl-smi">MainActivity</span><span class="pl-k">.</span><span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>, <span class="pl-c1">REQUEST_CODE</span>);
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onFingerprintDialogAuthenticated</span>() {
+        <span class="pl-c">// Authentication is successful</span>
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onFingerprintDialogVerifyPassword</span>(<span class="pl-k">final</span> <span class="pl-smi">FingerprintDialog</span> <span class="pl-v">dialog</span>, <span class="pl-k">final</span> <span class="pl-smi">String</span> <span class="pl-v">password</span>) {
+        <span class="pl-c">// Password verification has been requested. Use this method to verify the `password` passed</span>
+        <span class="pl-c">// as parameter against your backend</span>
+
+        <span class="pl-c">// Simulate exchange with backend</span>
+        <span class="pl-k">new</span> <span class="pl-smi">Handler</span>()<span class="pl-k">.</span>postDelayed(<span class="pl-k">new</span> <span class="pl-smi">Runnable</span>() {
+            <span class="pl-k">@Override</span>
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+                dialog<span class="pl-k">.</span>notifyPasswordValidation(password<span class="pl-k">.</span>equals(<span class="pl-s"><span class="pl-pds">"</span>aitorvs<span class="pl-pds">"</span></span>));
+            }
+        }, <span class="pl-c1">1500</span>);
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onFingerprintDialogStageUpdated</span>(<span class="pl-smi">FingerprintDialog</span> <span class="pl-v">dialog</span>, <span class="pl-smi">FingerprintDialog</span>.<span class="pl-smi">Stage</span> <span class="pl-v">stage</span>) {
+        <span class="pl-smi">Log</span><span class="pl-k">.</span>d(<span class="pl-c1">TAG</span>, <span class="pl-s"><span class="pl-pds">"</span>Dialog stage: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> stage<span class="pl-k">.</span>name());
+    }
+
+    <span class="pl-k">public</span> <span class="pl-k">enum</span> <span class="pl-en">Stage</span> {
+        <span class="pl-c1">FINGERPRINT</span>,        <span class="pl-c">// fingerprint authentication allowed</span>
+        <span class="pl-c1">KEY_INVALIDATED</span>,    <span class="pl-c">// key invalidated, password to be required</span>
+        <span class="pl-c1">PASSWORD</span>            // password authentication selected by the user
+    }
+
+    <span class="pl-k">@Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">onFingerprintDialogCancelled</span>() {
+        <span class="pl-smi">Toast</span><span class="pl-k">.</span>makeText(<span class="pl-v">this</span>, <span class="pl-smi">R</span><span class="pl-k">.</span>string<span class="pl-k">.</span>dialog_cancelled, <span class="pl-smi">Toast</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH_SHORT</span>)<span class="pl-k">.</span>show();
+    }
+}</pre></div>
+
+<h2>
+<a id="dialog-fingerlock-in-3-steps" class="anchor" href="#dialog-fingerlock-in-3-steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>(Dialog) FingerLock in 3 steps</h2>
+
+<h3>
+<a id="1-implement-the-dialog-callbacks" class="anchor" href="#1-implement-the-dialog-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Implement the dialog callbacks</h3>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MainActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AppCompatActivity</span>
+        <span class="pl-k">implements</span> <span class="pl-e">FingerprintDialog</span>.<span class="pl-e">Callback</span> {
+    <span class="pl-c">//...Looooots of code here</span>
+
+}</pre></div>
+
+<h3>
+<a id="2-show-the-dialog" class="anchor" href="#2-show-the-dialog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Show the dialog</h3>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> onCreate(<span class="pl-smi">Bundle</span> savedInstanceState) {
+        <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
+
+        <span class="pl-c">// show fingerprint dialog</span>
+        <span class="pl-smi">FingerprintDialog</span><span class="pl-k">.</span>show(<span class="pl-smi">MainActivity</span><span class="pl-k">.</span><span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>, <span class="pl-c1">REQUEST_CODE</span>);
+    }</pre></div>
+
+<p>The first parameter is the <code>Context</code> of the caller or application context.
+The second parameter shall be a unique non-empty <code>String</code> that severs as the key name for the encryption cipher.
+The third parameter is a positive integer value that represents a request code.</p>
+
+<h3>
+<a id="3-handle-callbacks" class="anchor" href="#3-handle-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Handle callbacks</h3>
+
+<h4>
+<a id="authenticated-1" class="anchor" href="#authenticated-1" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authenticated</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerprintDialogAuthenticated() {
+        <span class="pl-c">// Authentication is successful</span>
+    }</pre></div>
+
+<h4>
+<a id="verify-password" class="anchor" href="#verify-password" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Verify password</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerprintDialogVerifyPassword(<span class="pl-k">final</span> <span class="pl-smi">FingerprintDialog</span> dialog, <span class="pl-k">final</span> <span class="pl-smi">String</span> password) {
+        <span class="pl-c">// Password verification has been requested. Use this method to verify the `password` passed</span>
+        <span class="pl-c">// as parameter against your backend</span>
+
+        <span class="pl-c">// Simulate exchange with backend</span>
+        <span class="pl-k">new</span> <span class="pl-smi">Handler</span>()<span class="pl-k">.</span>postDelayed(<span class="pl-k">new</span> <span class="pl-smi">Runnable</span>() {
+            <span class="pl-k">@Override</span>
+            <span class="pl-k">public</span> <span class="pl-k">void</span> <span class="pl-en">run</span>() {
+                dialog<span class="pl-k">.</span>notifyPasswordValidation(password<span class="pl-k">.</span>equals(<span class="pl-s"><span class="pl-pds">"</span>aitorvs<span class="pl-pds">"</span></span>));
+            }
+        }, <span class="pl-c1">1500</span>);
+    }</pre></div>
+
+<p>Called when password verification is required. Either because triggered automatically when the provided
+key is no longer valid or because the user required so.</p>
+
+<p>Once the password is verified, notify the dialog calling <code>dialog.notifyPasswordValidation(boolean)</code>.</p>
+
+<h4>
+<a id="state-updated" class="anchor" href="#state-updated" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>State updated</h4>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerprintDialogStageUpdated(<span class="pl-smi">FingerprintDialog</span> dialog, <span class="pl-smi">FingerprintDialog</span><span class="pl-k">.</span><span class="pl-smi">Stage</span> stage) {
+        <span class="pl-smi">Log</span><span class="pl-k">.</span>d(<span class="pl-c1">TAG</span>, <span class="pl-s"><span class="pl-pds">"</span>Dialog stage: <span class="pl-pds">"</span></span> <span class="pl-k">+</span> stage<span class="pl-k">.</span>name());
+    }</pre></div>
+
+<p>Method called at every internal stage change. Possible states are:</p>
+
+<div class="highlight highlight-source-java"><pre>    <span class="pl-k">public</span> <span class="pl-k">enum</span> <span class="pl-en">Stage</span> {
+        <span class="pl-c1">FINGERPRINT</span>,        <span class="pl-c">// fingerprint authentication allowed</span>
+        <span class="pl-c1">KEY_INVALIDATED</span>,    <span class="pl-c">// key invalidated, password to be required</span>
+        <span class="pl-c1">PASSWORD</span>            // password authentication selected by the user
+    }</pre></div>
+
+<p>It is normally not necessary to act on any of the stages.</p>
+
+<h4>
+<a id="authentication-cancelled" class="anchor" href="#authentication-cancelled" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Authentication cancelled</h4>
+
+<p>Called when the user cancels the authentication dialog.</p>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">public</span> <span class="pl-k">void</span> onFingerprintDialogCancelled() {
+        <span class="pl-smi">Toast</span><span class="pl-k">.</span>makeText(<span class="pl-v">this</span>, <span class="pl-smi">R</span><span class="pl-k">.</span>string<span class="pl-k">.</span>dialog_cancelled, <span class="pl-smi">Toast</span><span class="pl-c1"><span class="pl-k">.</span>LENGTH_SHORT</span>)<span class="pl-k">.</span>show();
+    }</pre></div>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
+
+<pre><code>The MIT License (MIT)
+
+Copyright (c) 2016 Aitor Viana Sanchez
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/aitorvs/fingerlock">Fingerlock</a> is maintained by <a href="https://github.com/aitorvs">aitorvs</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
