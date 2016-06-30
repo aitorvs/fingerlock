@@ -52,25 +52,30 @@ dependencies {
 The core module requires Android M and above and also a device supporting fingerprint sensor. If you target
 devices before M or not having fingerprint sensors, use the dialog extension.
 
-## (Core) FingerLock in 4 steps
+## (Core) FingerLock in 3 step
 
-###1. Register your fingerprint listener component (recommended to use `onResume`)
+###1. Implement the `FingerLockResultCallback` inside your Activity/Fragment
+
+```java
+public class MainActivity extends AppCompatActivity
+        implements FingerLockResultCallback {
+        //...
+}
+```
+
+###2. Initialize the library (e.g. inside `onCreate()` method)
+
 
 ```java
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onCreate(Bundle savedInstanceState) {
+        // ... Some code here
 
-        // register and use a key to increase security
-        FingerLock.register(this, KEY_NAME, this);
+        mFingerLock = FingerLock.initialize(this, KEY_NAME);
     }
 ```
 
-The first parameter is the `Context`. It can be either the caller context but also application context.
-The second parameter shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
-The last parameter is the callback where the fingerprint events will land on.
-
-###2. Start the fingerprint scanning
+###3. Start the fingerprint scanning
 
 It is as simple as calling the `start()` method.
 
@@ -92,7 +97,7 @@ It is as simple as calling the `start()` method.
     }
 ```
 
-###3. Handle the callbacks
+###4. Handle the callbacks
 
 ####Library is ready
 
@@ -171,20 +176,6 @@ The callback provides error events that may happen throughout the fingerprint au
                 // Unrecoverable internal error occurred. Unregister and register back
                 break;
         }
-    }
-```
-
-###4. Unregister when done
-
-Ensure to unregister the component to avoid memory leaks (recommended to be done in `onPause()`)
-
-```java
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // unregister to stop receiving fingerprint events
-        FingerLock.unregister(this);
     }
 ```
 
