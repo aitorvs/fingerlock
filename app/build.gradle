@@ -1,5 +1,9 @@
 apply plugin: 'com.android.application'
 
+def gitTag = 'git describe --tags'.execute([], project.rootDir).text.trim()
+def gitCommitCount = 100 +
+        Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
+
 android {
     compileSdkVersion setup.compileSdk
     buildToolsVersion setup.buildTools
@@ -12,8 +16,8 @@ android {
         applicationId "com.aitorvs.android.fingerlock"
         minSdkVersion setup.minSdk
         targetSdkVersion setup.targetSdk
-        versionCode 1
-        versionName "1.0"
+        versionCode gitCommitCount
+        versionName gitTag
     }
     buildTypes {
         release {
