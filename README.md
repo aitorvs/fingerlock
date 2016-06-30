@@ -29,7 +29,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:core:0.1.0'
+    compile 'com.github.aitorvs.fingerlock:core:0.x.0'
 }
 ```
 
@@ -44,7 +44,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:dialog:0.1.0'
+    compile 'com.github.aitorvs.fingerlock:dialog:0.x.0'
 }
 ```
 # Core
@@ -52,7 +52,7 @@ dependencies {
 The core module requires Android M and above and also a device supporting fingerprint sensor. If you target
 devices before M or not having fingerprint sensors, use the dialog extension.
 
-## (Core) FingerLock in 3 step
+## (Core) FingerLock in 4 steps
 
 ###1. Implement the `FingerLockResultCallback` inside your Activity/Fragment
 
