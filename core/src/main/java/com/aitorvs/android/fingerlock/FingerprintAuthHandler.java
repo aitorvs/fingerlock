@@ -28,12 +28,12 @@ public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCal
 
     private final FingerprintManager.CryptoObject mCryptoObject;
     private CancellationSignal mCancellationSignal;
-    private FingerLock.FingerLockResultCallback mCallback;
+    private FingerLockResultCallback mCallback;
 
     // flags when the operation is canceled internally
     private boolean mSelfCancelled;
 
-    FingerprintAuthHandler(FingerprintManager.CryptoObject cryptoObject, FingerLock.FingerLockResultCallback callback) {
+    FingerprintAuthHandler(FingerprintManager.CryptoObject cryptoObject, FingerLockResultCallback callback) {
         mCryptoObject = cryptoObject;
         mCallback = callback;
     }

@@ -1,6 +1,5 @@
 package com.aitorvs.android.fingerlock.dialog;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -23,7 +23,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.aitorvs.android.fingerlock.FingerLock;
+import com.aitorvs.android.fingerlock.*;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
@@ -31,7 +31,25 @@ import com.aitorvs.android.fingerlock.FingerLock;
  */
 @SuppressWarnings("ResourceType")
 public class FingerprintDialog extends DialogFragment
-        implements TextView.OnEditorActionListener, FingerLock.FingerLockResultCallback {
+        implements TextView.OnEditorActionListener, FingerLockResultCallback {
+
+    // Tag to pass fragment request code argument
+    private static final String ARG_REQUEST_CODE = "request_code";
+
+    // Tag to pass fragment cancelable argument
+    private static final String ARG_CANCELABLE = "cancelable";
+
+    // Tag to pass fragment key name argument
+    private static final String ARG_KEY_NAME = "key_name";
+
+    // TAG to put/get params inside bundles
+    private static final String TAG_STAGE = "stage";
+
+    // fingerlock library object
+    private FingerLockApi.FingerLockImpl mFingerLock;
+
+    // reference to the caller context
+    private Context mContext;
 
     public interface Callback {
         void onFingerprintDialogAuthenticated();
@@ -45,7 +63,7 @@ public class FingerprintDialog extends DialogFragment
 
     static final long ERROR_TIMEOUT_MILLIS = 1600;
     static final long SUCCESS_DELAY_MILLIS = 1300;
-    static final String TAG = "{FINGERLOCK_PASS_DIALOG}";
+    static final String TAG = FingerprintDialog.class.getSimpleName();
 
     private View mFingerprintContent;
     private View mBackupContent;
@@ -74,10 +92,9 @@ public class FingerprintDialog extends DialogFragment
             dialog.dismiss();
         dialog = new FingerprintDialog();
         Bundle args = new Bundle();
-        args.putString("key_name", keyName);
-        args.putInt("request_code", requestCode);
-        args.putBoolean("was_initialized", FingerLock.inUseBy((FingerLock.FingerLockResultCallback) context));
-        args.putBoolean("cancelable", cancelable);
+        args.putString(ARG_KEY_NAME, keyName);
+        args.putInt(ARG_REQUEST_CODE, requestCode);
+        args.putBoolean(ARG_CANCELABLE, cancelable);
         dialog.setArguments(args);
         dialog.show(context.getSupportFragmentManager(), TAG);
         mInputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -94,17 +111,20 @@ public class FingerprintDialog extends DialogFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putSerializable("stage", mStage);
+        outState.putSerializable(TAG_STAGE, mStage);
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        if (getArguments() == null || !getArguments().containsKey("key_name"))
+        if (getArguments() == null || !getArguments().containsKey(ARG_KEY_NAME))
             throw new IllegalStateException("FingerprintDialog must be shown with show(Activity, String, int).");
         else if (savedInstanceState != null)
-            mStage = (Stage) savedInstanceState.getSerializable("stage");
-        setCancelable(getArguments().getBoolean("cancelable", true));
+            mStage = (Stage) savedInstanceState.getSerializable(TAG_STAGE);
+        setCancelable(getArguments().getBoolean(ARG_CANCELABLE, true));
+
+        // create the FingerLock library instance
+        mFingerLock = FingerLockApi.create();
 
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                 .title(R.string.sign_in)
@@ -112,7 +132,7 @@ public class FingerprintDialog extends DialogFragment
                 .positiveText(android.R.string.cancel)
                 .negativeText(R.string.use_password)
                 .autoDismiss(false)
-                .cancelable(getArguments().getBoolean("cancelable", true))
+                .cancelable(getArguments().getBoolean(ARG_CANCELABLE, true))
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
@@ -153,50 +173,39 @@ public class FingerprintDialog extends DialogFragment
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (!(context instanceof Callback)) {
+            throw new IllegalStateException("Components showing a FingerprintDialog must implement FingerprintDialog.Callback.");
+        }
+        mCallback = (Callback) context;
+        mContext = context;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        FingerLock.register(getActivity(), getArguments().getString("key_name", ""), this);
+        Bundle arguments = getArguments();
+
+        if (arguments != null) {
+            String keyName = arguments.getString(ARG_KEY_NAME, "");
+            mFingerLock.register(mContext, keyName, this);
+        }
+        if (BuildConfig.DEBUG) Log.d(TAG, "onResume: called");
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        FingerLock.unregister(this);
+        mFingerLock.unregister(this);
+        if (BuildConfig.DEBUG) Log.d(TAG, "onPause: called");
     }
 
     @Override
     public void onCancel(DialogInterface dialog) {
         super.onCancel(dialog);
-        redirectToActivity();
         if (mCallback != null)
             mCallback.onFingerprintDialogCancelled();
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        redirectToActivity();
-    }
-
-    private void redirectToActivity() {
-        FingerLock.unregister(this);
-        // This is needed because the dialog will not cause the activity onResume/onPause cycle.
-        // Hence the register/unregister cycle will not happen normally inside the activity
-        if (getActivity() != null &&
-                getActivity() instanceof FingerLock.FingerLockResultCallback &&
-                getArguments().getBoolean("was_initialized", false)) {
-            FingerLock.register(getActivity(), getArguments().getString("key_name", ""), (FingerLock.FingerLockResultCallback) getActivity());
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (!(activity instanceof Callback)) {
-            FingerLock.unregister(this);
-            throw new IllegalStateException("Activities showing a FingerprintDialog must implement FingerprintDialog.Callback.");
-        }
-        mCallback = (Callback) activity;
     }
 
     /**
@@ -211,7 +220,7 @@ public class FingerprintDialog extends DialogFragment
         // Show the keyboard.
         mPassword.postDelayed(mShowKeyboardRunnable, 500);
         // Fingerprint is not used anymore. Stop listening for it.
-        FingerLock.stop();
+        mFingerLock.stop();
     }
 
     private void toggleButtonsEnabled(boolean enabled) {
@@ -235,7 +244,7 @@ public class FingerprintDialog extends DialogFragment
             if (mStage == Stage.KEY_INVALIDATED &&
                     mUseFingerprintFutureCheckBox.isChecked()) {
                 // Re-create the key so that fingerprints including new ones are validated.
-                FingerLock.recreateKey(this);
+                mFingerLock.recreateKey(this);
                 mStage = Stage.FINGERPRINT;
             }
             mPassword.setText("");
@@ -281,7 +290,7 @@ public class FingerprintDialog extends DialogFragment
                 mBackupContent.setVisibility(View.VISIBLE);
                 if (mStage == Stage.KEY_INVALIDATED) {
                     // Fingerprint is not used anymore. Stop listening for it.
-                    FingerLock.stop();
+                    mFingerLock.stop();
                     mPasswordDescriptionTextView.setVisibility(View.GONE);
                     mNewFingerprintEnrolledTextView.setVisibility(View.VISIBLE);
                     mUseFingerprintFutureCheckBox.setVisibility(View.VISIBLE);
@@ -377,7 +386,7 @@ public class FingerprintDialog extends DialogFragment
 
     @Override
     public void onFingerLockReady() {
-        FingerLock.start();
+        mFingerLock.start();
     }
 
     @Override

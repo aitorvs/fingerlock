@@ -10,17 +10,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.aitorvs.android.fingerlock.FingerLock;
+import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 import com.aitorvs.android.fingerlock.dialog.FingerprintDialog;
 
 
 public class MainActivity extends AppCompatActivity
-        implements FingerLock.FingerLockResultCallback,
+        implements FingerLockResultCallback,
         FingerprintDialog.Callback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String KEY_NAME = "FingerLockAppKey";
     private TextView mStatus;
     private Button mButton;
+    private FingerLock mFingerLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity
         mButton = (Button) findViewById(R.id.beginAuthentication);
         Button useDialog = (Button) findViewById(R.id.useDialog);
 
+        // initialize the library and keep a reference to it
+        mFingerLock = FingerLock.initialize(this, KEY_NAME);
+
         if (useDialog != null) {
             useDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -39,22 +44,6 @@ public class MainActivity extends AppCompatActivity
                 }
             });
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // register and use a key to increase security
-        FingerLock.register(this, KEY_NAME, this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // unregister to stop receiving fingerprint events
-        FingerLock.unregister(this);
     }
 
     @Override
@@ -89,7 +78,7 @@ public class MainActivity extends AppCompatActivity
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FingerLock.start();
+                mFingerLock.start();
             }
         });
     }
@@ -101,7 +90,7 @@ public class MainActivity extends AppCompatActivity
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FingerLock.start();
+                mFingerLock.start();
             }
         });
         mButton.setEnabled(true);
@@ -115,14 +104,14 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 // Stop listening
-                FingerLock.stop();
+                mFingerLock.stop();
                 mStatus.setText(R.string.status_ready);
                 // Clicking the button again will start listening again
                 mButton.setText(R.string.start_scanning);
                 mButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        FingerLock.start();
+                        mFingerLock.start();
                     }
                 });
             }
