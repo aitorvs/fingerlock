@@ -24,6 +24,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
 import com.aitorvs.android.fingerlock.*;
+import com.aitorvs.android.fingerlock.internal.FingerLockApi;
 
 /**
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password

@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.internal;
 
 /*
  * Copyright (C) 26/05/16 aitorvs
@@ -23,6 +23,8 @@ import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.util.Log;
+
+import com.aitorvs.android.fingerlock.BuildConfig;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;

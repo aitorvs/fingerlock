@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.internal;
 
 /*
  * Copyright (C) 23/05/16 aitorvs
@@ -23,8 +23,11 @@ import android.os.Build;
 import android.os.CancellationSignal;
 import android.support.annotation.RequiresPermission;
 
+import com.aitorvs.android.fingerlock.FingerLock;
+import com.aitorvs.android.fingerlock.FingerLockResultCallback;
+
 @TargetApi(Build.VERSION_CODES.M)
-public class FingerprintAuthHandler extends FingerprintManager.AuthenticationCallback {
+class FingerprintAuthHandler extends FingerprintManager.AuthenticationCallback {
 
     private final FingerprintManager.CryptoObject mCryptoObject;
     private CancellationSignal mCancellationSignal;

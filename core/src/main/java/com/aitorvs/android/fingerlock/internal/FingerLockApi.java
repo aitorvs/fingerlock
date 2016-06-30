@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.internal;
 
 /*
  * Copyright (C) 30/06/16 aitorvs
@@ -26,10 +26,15 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.aitorvs.android.fingerlock.FingerLock;
+import com.aitorvs.android.fingerlock.FingerLockResultCallback;
+
 import java.security.InvalidParameterException;
 
-// FIXME: 30/06/16 private this class
-public class FingerLockApi {
+/**
+ * {@hide}
+ */
+public final class FingerLockApi {
     private static FingerprintAuthHandler mAuthenticationHandler;
 
     public static FingerLockImpl create() {
@@ -41,9 +46,12 @@ public class FingerLockApi {
         }
     }
 
-    // FIXME: 30/06/16 private this class
+    /**
+     * {@hide}
+     */
     public interface FingerLockImpl {
         /**
+         * {@hide}
          * Returns <code>true</code> when fingerprint authentication is available and supported
          *
          * @return <code>true</code> when supported
@@ -51,6 +59,7 @@ public class FingerLockApi {
         boolean isFingerprintAuthSupported();
 
         /**
+         * {@hide}
          * Returns <code>true</code> when the user has at least one fingerprint registered
          *
          * @return <code>true</code> when at least one fingerprint is registered
@@ -58,16 +67,19 @@ public class FingerLockApi {
         boolean isFingerprintRegistered();
 
         /**
+         * {@hide}
          * Call this method to start fingerprint scanning
          */
         void start();
 
         /**
+         * {@hide}
          * Call this method to force stopping fingerprint scanning
          */
         void stop();
 
         /**
+         * {@hide}
          * Register a fingerprint activity listener
          *
          * @param context  caller context
@@ -77,6 +89,7 @@ public class FingerLockApi {
         void register(@NonNull Context context, @NonNull final String keyName, @NonNull FingerLockResultCallback callback);
 
         /**
+         * {@hide}
          * Call this method to avoid any memory leakage. Good place is <code>onPause</code>
          *
          * @param listener previously registered listener
@@ -86,13 +99,13 @@ public class FingerLockApi {
 
         boolean inUseBy(FingerLockResultCallback listener);
 
-        /**
+        /**{@hide}
          * Recreate the secret key.
          */
         void recreateKey(FingerLockResultCallback listener);
     }
 
-    /**
+    /**{@hide}
      * Baseline implementation, pre-M
      */
     static class BaseFingerLockImpl implements FingerLockImpl {
@@ -140,7 +153,7 @@ public class FingerLockApi {
         }
     }
 
-    /**
+    /**{@hide}
      * M implementation
      */
     @TargetApi(Build.VERSION_CODES.M)

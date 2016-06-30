@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock;
+package com.aitorvs.android.fingerlock.internal;
 
 /*
  * Copyright (C) 26/05/16 aitorvs
