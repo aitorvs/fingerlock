@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
 }
 ```
 
-### 2. Show the dialog
+### 2. Create and show the dialog
 
 ```java
     @Override
