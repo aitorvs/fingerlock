@@ -260,9 +260,9 @@ public class MainActivity extends AppCompatActivity
     }
 ```
 
-The first parameter is the `Context` of the caller or application context.
-The second parameter shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
-The third parameter is a positive integer value that represents a request code.
+The **first parameter** is the `Context` of the caller or application context.
+The **second parameter** shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
+The **third parameter** is a positive `Integer` value that represents a request code.
 
 ### 3. Handle callbacks
 
