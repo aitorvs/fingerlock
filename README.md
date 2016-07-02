@@ -255,14 +255,18 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // show fingerprint dialog
-        FingerprintDialog.show(MainActivity.this, KEY_NAME, REQUEST_CODE);
+        // create and show the fingerprint dialog using the Builder
+        new FingerprintDialog.Builder()
+                .with(MainActivity.this)    // context, must call
+                .setKeyName(KEY_NAME)       // String key name, must call
+                .setRequestCode(69)         // request code identifier, must call
+                .show();                    // show the dialog
     }
 ```
 
-The **first parameter** is the `Context` of the caller or application context.
-The **second parameter** shall be a unique non-empty `String` that severs as the key name for the encryption cipher.
-The **third parameter** is a positive `Integer` value that represents a request code.
+Additionally, one could also call `setCancelable(Boolean)` in the builder
+to set the dialog as cancelable or not. This call is optional and default
+value is set to `true`.
 
 ### 3. Handle callbacks
 

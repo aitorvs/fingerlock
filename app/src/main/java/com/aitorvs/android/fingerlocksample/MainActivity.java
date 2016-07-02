@@ -39,7 +39,11 @@ public class MainActivity extends AppCompatActivity
             useDialog.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    FingerprintDialog.show(MainActivity.this, KEY_NAME, 69);
+                    new FingerprintDialog.Builder()
+                            .with(MainActivity.this)
+                            .setKeyName(KEY_NAME)
+                            .setRequestCode(69)
+                            .show();
                 }
             });
         }

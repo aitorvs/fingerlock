@@ -4,12 +4,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -81,32 +83,6 @@ public class FingerprintDialog extends DialogFragment
     private Callback mCallback;
 
     public FingerprintDialog() {
-    }
-
-    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, @NonNull String keyName, int requestCode) {
-        return show(context, keyName, requestCode, true);
-    }
-
-    public static <T extends FragmentActivity & Callback> FingerprintDialog show(T context, @NonNull String keyName, int requestCode, boolean cancelable) {
-        FingerprintDialog dialog = getVisible(context);
-        if (dialog != null)
-            dialog.dismiss();
-        dialog = new FingerprintDialog();
-        Bundle args = new Bundle();
-        args.putString(ARG_KEY_NAME, keyName);
-        args.putInt(ARG_REQUEST_CODE, requestCode);
-        args.putBoolean(ARG_CANCELABLE, cancelable);
-        dialog.setArguments(args);
-        dialog.show(context.getSupportFragmentManager(), TAG);
-        mInputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        return dialog;
-    }
-
-    public static <T extends FragmentActivity> FingerprintDialog getVisible(T context) {
-        Fragment frag = context.getSupportFragmentManager().findFragmentByTag(TAG);
-        if (frag != null && frag instanceof FingerprintDialog)
-            return (FingerprintDialog) frag;
-        return null;
     }
 
     @Override
@@ -263,7 +239,7 @@ public class FingerprintDialog extends DialogFragment
     private final Runnable mShowKeyboardRunnable = new Runnable() {
         @Override
         public void run() {
-                mInputMethodManager.showSoftInput(mPassword, 0);
+            mInputMethodManager.showSoftInput(mPassword, 0);
         }
     };
 
@@ -397,5 +373,94 @@ public class FingerprintDialog extends DialogFragment
             mStage = Stage.KEY_INVALIDATED;
         updateStage(null);
 
+    }
+
+    /**
+     * Creates a builder for the {@link FingerprintDialog} dialog
+     */
+    public static class Builder {
+
+        private String keyName;
+        private int requestCode = -1;
+        private boolean cancelable = true;
+        private FragmentActivity context;
+
+        /**
+         * Set the caller context.
+         *
+         * @param context caller {@link Context}. Shall be {@link android.app.Activity} or
+         *                {@link Fragment} and implement {@link Callback} interface
+         * @param <T>
+         * @return This Builder object to allow for chaining of calls to set methods
+         */
+        public <T extends FragmentActivity & Callback> Builder with(@NonNull T context) {
+            this.context = context;
+            return this;
+        }
+
+        /**
+         * Set the keyname
+         *
+         * @param keyName key string
+         * @return This Builder object to allow for chaining of calls to set methods
+         */
+        public Builder setKeyName(@NonNull String keyName) {
+            this.keyName = keyName;
+            return this;
+        }
+
+        /**
+         * Set the request code
+         *
+         * @param requestCode positive integer number
+         * @return This Builder object to allow for chaining of calls to set methods
+         */
+        public Builder setRequestCode(@IntRange(from = 0, to = Integer.MAX_VALUE) int requestCode) {
+            this.requestCode = requestCode;
+            return this;
+        }
+
+        /**
+         * Set whether the dialog is cancelable or not
+         *
+         * @param cancelable <code>true</code> if cancelable (default = true)
+         * @return This Builder object to allow for chaining of calls to set methods
+         */
+        public Builder setCancelable(boolean cancelable) {
+            this.cancelable = cancelable;
+            return this;
+        }
+
+        /**
+         * Call this method to show and get the {@link FingerprintDialog} reference
+         *
+         * @param <T>
+         * @return {@link FingerprintDialog} dialog
+         */
+        @Nullable
+        public <T extends FragmentActivity & Callback> FingerprintDialog show() {
+            if (context == null || TextUtils.isEmpty(this.keyName) || requestCode < 0) {
+                return null;
+            }
+            FingerprintDialog dialog = getVisible(context);
+            if (dialog != null)
+                dialog.dismiss();
+            dialog = new FingerprintDialog();
+            Bundle args = new Bundle();
+            args.putString(ARG_KEY_NAME, keyName);
+            args.putInt(ARG_REQUEST_CODE, requestCode);
+            args.putBoolean(ARG_CANCELABLE, cancelable);
+            dialog.setArguments(args);
+            dialog.show(context.getSupportFragmentManager(), TAG);
+            mInputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            return dialog;
+        }
+
+        private <T extends FragmentActivity> FingerprintDialog getVisible(T context) {
+            Fragment frag = context.getSupportFragmentManager().findFragmentByTag(TAG);
+            if (frag != null && frag instanceof FingerprintDialog)
+                return (FingerprintDialog) frag;
+            return null;
+        }
     }
 }
