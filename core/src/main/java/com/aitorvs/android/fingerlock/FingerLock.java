@@ -32,7 +32,7 @@ import java.lang.annotation.RetentionPolicy;
 
 public final class FingerLock extends Fragment {
 
-    public static final String ARG_KEY_NAME = "ARG_KEY_NAME";
+    private static final String ARG_KEY_NAME = "ARG_KEY_NAME";
     private static final String TAG = FingerLock.class.getSimpleName();
     private FingerLockApi.FingerLockImpl impl;
     private Context mContext;
@@ -116,18 +116,34 @@ public final class FingerLock extends Fragment {
         return fragment;
     }
 
+    /**
+     * Returns <code>true</code> when fingerprint authentication is available and supported
+     *
+     * @return <code>true</code> when supported
+     */
     public boolean isFingerprintAuthSupported() {
         return impl.isFingerprintAuthSupported();
     }
 
+    /**
+     * Returns <code>true</code> when the user has at least one fingerprint registered
+     *
+     * @return <code>true</code> when at least one fingerprint is registered
+     */
     public boolean isFingerprintRegistered() {
         return impl.isFingerprintRegistered();
     }
 
+    /**
+     * Call this method to start fingerprint scanning
+     */
     public void start() {
         impl.start();
     }
 
+    /**
+     * Call this method to force stopping fingerprint scanning
+     */
     public void stop() {
         impl.stop();
     }

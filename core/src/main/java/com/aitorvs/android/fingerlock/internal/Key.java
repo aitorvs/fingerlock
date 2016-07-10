@@ -75,7 +75,17 @@ class Key {
         return this.keyName;
     }
 
-    public boolean cipherInit() throws NullKeyException {
+    /**
+     * Returns whether the key is still valid or the user needs to validate the key prior to
+     * authenticate.
+     * It simply needs to attempt to encrypt any data with the key that was created earlier.
+     * If the data can be encrypted with the key, then the user has logged in within our timeout
+     * period. If not, an exception is thrown and it’s time to confirm credentials
+     *
+     * @return <code>true</code> when key is valid
+     * @throws NullKeyException when the key has not been created
+     */
+    public boolean isKeyValid() throws NullKeyException {
 
         if (BuildConfig.DEBUG) Log.d(TAG, "initCipher with key " + keyName);
 
@@ -89,6 +99,7 @@ class Key {
             }
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
+            // the user has recently authenticated, we get here.
             return true;
 
         } catch (KeyPermanentlyInvalidatedException e) {

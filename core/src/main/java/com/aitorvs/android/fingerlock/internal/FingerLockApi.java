@@ -209,12 +209,12 @@ public final class FingerLockApi {
                     //noinspection MissingPermission
                     mAuthenticationHandler.start(mFingerprintManager);
 
-                    mCallback.onFingerLockScanning(!mKey.cipherInit());
+                    mCallback.onFingerLockScanning(!mKey.isKeyValid());
                 } catch (NullKeyException e) {
                     // key is not yet created. Create it and retry
                     mKey.recreateKey();
                     try {
-                        mCallback.onFingerLockScanning(!mKey.cipherInit());
+                        mCallback.onFingerLockScanning(!mKey.isKeyValid());
                     } catch (NullKeyException e1) {
                         // something went wrong unregister and notify
                         stop();
