@@ -91,7 +91,7 @@ class Key {
 
         try {
             keyStore.load(null);
-            SecretKey secretKey = (SecretKey) keyStore.getKey(keyName, null);
+            SecretKey secretKey = (SecretKey) keyStore.getKey(keyName, null /* password */);
             if (secretKey == null) {
                 // the key has not been created. Notify so that it can be created for the first
                 // time
