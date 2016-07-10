@@ -113,7 +113,7 @@ class Key {
         } catch (InvalidKeyException e) {
             throw new RuntimeException("Invalid key", e);
         } catch (CertificateException | IOException e) {
-            throw new RuntimeException("Cipher init exception", e);
+            throw new RuntimeException("KeyStore load error", e);
         }
     }
 
