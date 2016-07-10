@@ -104,9 +104,14 @@ class Key {
 
         } catch (KeyPermanentlyInvalidatedException e) {
             return false;
-        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
-                | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("Failed to init Cipher", e);
+        } catch (KeyStoreException e) {
+            throw new RuntimeException("KeyStore not initialized", e);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Algorithm for recovering the key cannot be found", e);
+        } catch (UnrecoverableKeyException e) {
+            throw new RuntimeException("Key cannot be recovered", e);
+        } catch (CertificateException | IOException | InvalidKeyException e) {
+            throw new RuntimeException("Cipher init exception", e);
         }
     }
 
