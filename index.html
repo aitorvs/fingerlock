@@ -53,7 +53,7 @@ depending on this library will automatically depend on Material Dialogs.</p>
 
     <span class="pl-c">// ... other dependencies here</span>
 
-    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:core:0.1.0<span class="pl-pds">'</span></span>
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:core:0.2.1<span class="pl-pds">'</span></span>
 }</pre></div>
 
 <h3>
@@ -67,7 +67,7 @@ authentication.</p>
 
     <span class="pl-c">// ... other dependencies here</span>
 
-    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:dialog:0.1.0<span class="pl-pds">'</span></span>
+    compile <span class="pl-s"><span class="pl-pds">'</span>com.github.aitorvs.fingerlock:dialog:0.2.1<span class="pl-pds">'</span></span>
 }</pre></div>
 
 <h1>
@@ -80,22 +80,25 @@ devices before M or not having fingerprint sensors, use the dialog extension.</p
 <a id="core-fingerlock-in-4-steps" class="anchor" href="#core-fingerlock-in-4-steps" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>(Core) FingerLock in 4 steps</h2>
 
 <h3>
-<a id="1-register-your-fingerprint-listener-component-recommended-to-use-onresume" class="anchor" href="#1-register-your-fingerprint-listener-component-recommended-to-use-onresume" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Register your fingerprint listener component (recommended to use <code>onResume</code>)</h3>
+<a id="1-implement-the-fingerlockresultcallback-inside-your-activityfragment" class="anchor" href="#1-implement-the-fingerlockresultcallback-inside-your-activityfragment" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>1. Implement the <code>FingerLockResultCallback</code> inside your Activity/Fragment</h3>
 
-<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
-    <span class="pl-k">protected</span> <span class="pl-k">void</span> onResume() {
-        <span class="pl-v">super</span><span class="pl-k">.</span>onResume();
-
-        <span class="pl-c">// register and use a key to increase security</span>
-        <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>register(<span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>, <span class="pl-v">this</span>);
-    }</pre></div>
-
-<p>The first parameter is the <code>Context</code>. It can be either the caller context but also application context.
-The second parameter shall be a unique non-empty <code>String</code> that severs as the key name for the encryption cipher.
-The last parameter is the callback where the fingerprint events will land on.</p>
+<div class="highlight highlight-source-java"><pre><span class="pl-k">public</span> <span class="pl-k">class</span> <span class="pl-en">MainActivity</span> <span class="pl-k">extends</span> <span class="pl-e">AppCompatActivity</span>
+        <span class="pl-k">implements</span> <span class="pl-e">FingerLockResultCallback</span> {
+        <span class="pl-c">//...</span>
+}</pre></div>
 
 <h3>
-<a id="2-start-the-fingerprint-scanning" class="anchor" href="#2-start-the-fingerprint-scanning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Start the fingerprint scanning</h3>
+<a id="2-initialize-the-library-eg-inside-oncreate-method" class="anchor" href="#2-initialize-the-library-eg-inside-oncreate-method" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Initialize the library (e.g. inside <code>onCreate()</code> method)</h3>
+
+<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
+    <span class="pl-k">protected</span> <span class="pl-k">void</span> onCreate(<span class="pl-smi">Bundle</span> savedInstanceState) {
+        <span class="pl-c">// ... Some code here</span>
+
+        mFingerLock <span class="pl-k">=</span> <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>initialize(<span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>);
+    }</pre></div>
+
+<h3>
+<a id="3-start-the-fingerprint-scanning" class="anchor" href="#3-start-the-fingerprint-scanning" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Start the fingerprint scanning</h3>
 
 <p>It is as simple as calling the <code>start()</code> method.</p>
 
@@ -116,7 +119,7 @@ The last parameter is the callback where the fingerprint events will land on.</p
     }</pre></div>
 
 <h3>
-<a id="3-handle-the-callbacks" class="anchor" href="#3-handle-the-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Handle the callbacks</h3>
+<a id="4-handle-the-callbacks" class="anchor" href="#4-handle-the-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Handle the callbacks</h3>
 
 <h4>
 <a id="library-is-ready" class="anchor" href="#library-is-ready" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Library is ready</h4>
@@ -193,19 +196,6 @@ them use fingerprint the next time.</p>
         }
     }</pre></div>
 
-<h3>
-<a id="4-unregister-when-done" class="anchor" href="#4-unregister-when-done" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>4. Unregister when done</h3>
-
-<p>Ensure to unregister the component to avoid memory leaks (recommended to be done in <code>onPause()</code>)</p>
-
-<div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
-    <span class="pl-k">protected</span> <span class="pl-k">void</span> onPause() {
-        <span class="pl-v">super</span><span class="pl-k">.</span>onPause();
-
-        <span class="pl-c">// unregister to stop receiving fingerprint events</span>
-        <span class="pl-smi">FingerLock</span><span class="pl-k">.</span>unregister(<span class="pl-v">this</span>);
-    }</pre></div>
-
 <h1>
 <a id="dialog-extension" class="anchor" href="#dialog-extension" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Dialog extension</h1>
 
@@ -274,19 +264,23 @@ support fingerprint authentication.</p>
 }</pre></div>
 
 <h3>
-<a id="2-show-the-dialog" class="anchor" href="#2-show-the-dialog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Show the dialog</h3>
+<a id="2-create-and-show-the-dialog" class="anchor" href="#2-create-and-show-the-dialog" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>2. Create and show the dialog</h3>
 
 <div class="highlight highlight-source-java"><pre>    @<span class="pl-smi">Override</span>
     <span class="pl-k">protected</span> <span class="pl-k">void</span> onCreate(<span class="pl-smi">Bundle</span> savedInstanceState) {
         <span class="pl-v">super</span><span class="pl-k">.</span>onCreate(savedInstanceState);
 
-        <span class="pl-c">// show fingerprint dialog</span>
-        <span class="pl-smi">FingerprintDialog</span><span class="pl-k">.</span>show(<span class="pl-smi">MainActivity</span><span class="pl-k">.</span><span class="pl-v">this</span>, <span class="pl-c1">KEY_NAME</span>, <span class="pl-c1">REQUEST_CODE</span>);
+        <span class="pl-c">// create and show the fingerprint dialog using the Builder</span>
+        <span class="pl-k">new</span> <span class="pl-smi">FingerprintDialog</span>.<span class="pl-smi">Builder</span>()
+                .with(<span class="pl-smi">MainActivity</span><span class="pl-k">.</span><span class="pl-v">this</span>)    <span class="pl-c">// context, must call</span>
+                .setKeyName(<span class="pl-c1">KEY_NAME</span>)       <span class="pl-c">// String key name, must call</span>
+                .setRequestCode(<span class="pl-c1">69</span>)         <span class="pl-c">// request code identifier, must call</span>
+                .show();                    <span class="pl-c">// show the dialog</span>
     }</pre></div>
 
-<p>The first parameter is the <code>Context</code> of the caller or application context.
-The second parameter shall be a unique non-empty <code>String</code> that severs as the key name for the encryption cipher.
-The third parameter is a positive integer value that represents a request code.</p>
+<p>Additionally, one could also call <code>setCancelable(Boolean)</code> in the builder
+to set the dialog as cancelable or not. This call is optional and default
+value is set to <code>true</code>.</p>
 
 <h3>
 <a id="3-handle-callbacks" class="anchor" href="#3-handle-callbacks" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>3. Handle callbacks</h3>
