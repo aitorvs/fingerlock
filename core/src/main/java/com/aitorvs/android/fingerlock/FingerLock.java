@@ -34,6 +34,7 @@ public final class FingerLock extends Fragment {
 
     private static final String ARG_KEY_NAME = "ARG_KEY_NAME";
     private static final String TAG = FingerLock.class.getSimpleName();
+    private static final String TAG_FINGER_LOCK_FRAGMENT = "TagFingerLockFragment";
     private FingerLockApi.FingerLockImpl impl;
     private Context mContext;
     private FingerLockResultCallback mCallback;
@@ -91,12 +92,15 @@ public final class FingerLock extends Fragment {
             return null;
         }
 
-
-        FingerLock fragment = createInstance(keyName);
-        activity.getSupportFragmentManager()
-                .beginTransaction()
-                .add(fragment, "FingerLock")
-                .commitNow();
+        // Have we created the fragment before ?
+        FingerLock fragment = (FingerLock) activity.getSupportFragmentManager().findFragmentByTag(TAG_FINGER_LOCK_FRAGMENT);
+        if (fragment == null) {
+            fragment = createInstance(keyName);
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(fragment, TAG_FINGER_LOCK_FRAGMENT)
+                    .commitNow();
+        }
 
         return fragment;
     }
