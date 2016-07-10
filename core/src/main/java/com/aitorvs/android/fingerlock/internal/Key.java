@@ -110,7 +110,9 @@ class Key {
             throw new RuntimeException("Algorithm for recovering the key cannot be found", e);
         } catch (UnrecoverableKeyException e) {
             throw new RuntimeException("Key cannot be recovered", e);
-        } catch (CertificateException | IOException | InvalidKeyException e) {
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException("Invalid key", e);
+        } catch (CertificateException | IOException e) {
             throw new RuntimeException("Cipher init exception", e);
         }
     }
