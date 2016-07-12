@@ -42,7 +42,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 
 @TargetApi(Build.VERSION_CODES.M)
-class Key {
+final class Key {
     private static final String TAG = Key.class.getSimpleName();
     private final KeyGenerator keyGenerator;
     private final Cipher cipher;
@@ -102,7 +102,7 @@ class Key {
             // the user has recently authenticated, we get here.
             return true;
 
-        } catch (KeyPermanentlyInvalidatedException e) {
+        } catch (InvalidKeyException e) {
             return false;
         } catch (KeyStoreException e) {
             throw new RuntimeException("KeyStore not initialized", e);
@@ -110,8 +110,6 @@ class Key {
             throw new RuntimeException("Algorithm for recovering the key cannot be found", e);
         } catch (UnrecoverableKeyException e) {
             throw new RuntimeException("Key cannot be recovered", e);
-        } catch (InvalidKeyException e) {
-            throw new RuntimeException("Invalid key", e);
         } catch (CertificateException | IOException e) {
             throw new RuntimeException("KeyStore load error", e);
         }
