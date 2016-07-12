@@ -30,7 +30,7 @@ import com.aitorvs.android.fingerlock.internal.FingerLockApi;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public final class FingerLock extends Fragment {
+public final class FingerLock extends Fragment implements FingerLockLibraryCalls{
 
     private static final String ARG_KEY_NAME = "ARG_KEY_NAME";
     private static final String TAG = FingerLock.class.getSimpleName();
@@ -125,6 +125,7 @@ public final class FingerLock extends Fragment {
      *
      * @return <code>true</code> when supported
      */
+    @Override
     public boolean isFingerprintAuthSupported() {
         return impl.isFingerprintAuthSupported();
     }
@@ -134,6 +135,7 @@ public final class FingerLock extends Fragment {
      *
      * @return <code>true</code> when at least one fingerprint is registered
      */
+    @Override
     public boolean isFingerprintRegistered() {
         return impl.isFingerprintRegistered();
     }
@@ -141,6 +143,7 @@ public final class FingerLock extends Fragment {
     /**
      * Call this method to start fingerprint scanning
      */
+    @Override
     public void start() {
         impl.start();
     }
@@ -148,14 +151,12 @@ public final class FingerLock extends Fragment {
     /**
      * Call this method to force stopping fingerprint scanning
      */
+    @Override
     public void stop() {
         impl.stop();
     }
 
-    public boolean inUseBy(FingerLockResultCallback listener) {
-        return impl.inUseBy(listener);
-    }
-
+    @Override
     public void recreateKey(final Object listener) {
         if (listener instanceof FingerLockResultCallback) {
             impl.recreateKey((FingerLockResultCallback) listener);
