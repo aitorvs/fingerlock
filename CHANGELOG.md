@@ -1,6 +1,13 @@
 Change Log
 ==========
 
+Version 0.2.2 *(2016-08-14)*
+----------------------------
+
+ * Docs: Add MIT license notice to source files
+ * Refactor packages
+ * Refactor classes to final
+
 Version 0.2.1 *(2016-07-10)*
 ----------------------------
 

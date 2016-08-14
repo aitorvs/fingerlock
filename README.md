@@ -29,7 +29,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:core:0.2.1'
+    compile 'com.github.aitorvs.fingerlock:core:0.2.2'
 }
 ```
 
@@ -44,7 +44,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:dialog:0.2.1'
+    compile 'com.github.aitorvs.fingerlock:dialog:0.2.2'
 }
 ```
 # Core
