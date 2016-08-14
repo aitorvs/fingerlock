@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 import com.aitorvs.android.fingerlock.FingerLock;
 import com.aitorvs.android.fingerlock.FingerLockResultCallback;
-import com.aitorvs.android.fingerlock.dialog.FingerprintDialog;
+import com.aitorvs.android.fingerlock.FingerprintDialog;
 
 
 public class MainActivity extends AppCompatActivity

@@ -22,7 +22,7 @@ import android.support.annotation.NonNull;
 import com.aitorvs.android.fingerlock.FingerLock;
 import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 
-public class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
+class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
     @Override
     public boolean isFingerprintAuthSupported() {
         return false;

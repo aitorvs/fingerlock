@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock.dialog;
+package com.aitorvs.android.fingerlock;
 /*
  * Copyright (C) 23/05/16 aitorvs
  *

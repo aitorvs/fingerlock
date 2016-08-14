@@ -1,4 +1,4 @@
-package com.aitorvs.android.fingerlock.dialog;
+package com.aitorvs.android.fingerlock;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.aitorvs.android.fingerlock.*;
+import com.aitorvs.android.fingerlock.dialog.R;
 import com.aitorvs.android.fingerlock.internal.FingerLockApi;
 
 /**
