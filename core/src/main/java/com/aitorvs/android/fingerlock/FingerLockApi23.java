@@ -18,7 +18,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.aitorvs.android.fingerlock.internal;
+package com.aitorvs.android.fingerlock;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -29,10 +29,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-
-import com.aitorvs.android.fingerlock.BuildConfig;
-import com.aitorvs.android.fingerlock.FingerLock;
-import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 
 import java.security.InvalidParameterException;
 

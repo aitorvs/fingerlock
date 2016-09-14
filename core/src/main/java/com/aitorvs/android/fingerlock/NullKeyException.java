@@ -18,7 +18,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.aitorvs.android.fingerlock.internal;
+package com.aitorvs.android.fingerlock;
 
 class NullKeyException extends Exception {
 }

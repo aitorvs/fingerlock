@@ -18,13 +18,10 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.aitorvs.android.fingerlock.internal;
+package com.aitorvs.android.fingerlock;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-
-import com.aitorvs.android.fingerlock.FingerLock;
-import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 
 class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
     @Override

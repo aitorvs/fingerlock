@@ -18,7 +18,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.aitorvs.android.fingerlock.internal;
+package com.aitorvs.android.fingerlock;
 
 import android.annotation.TargetApi;
 import android.os.Build;
@@ -26,8 +26,6 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
-import com.aitorvs.android.fingerlock.BuildConfig;
 
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;

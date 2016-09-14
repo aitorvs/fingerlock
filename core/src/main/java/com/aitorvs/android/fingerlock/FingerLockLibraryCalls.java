@@ -23,7 +23,7 @@ package com.aitorvs.android.fingerlock;
 /**
  * Library public interface
  */
-public interface FingerLockLibraryCalls {
+interface FingerLockLibraryCalls {
     /**
      * Returns <code>true</code> when fingerprint authentication is available and supported
      *

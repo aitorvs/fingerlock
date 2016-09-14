@@ -18,16 +18,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.aitorvs.android.fingerlock.internal;
+package com.aitorvs.android.fingerlock;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 
 /**
  * {@hide}
  */
-public final class FingerLockApi {
+final class FingerLockApi {
 
     public static FingerLockImpl create() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
@@ -41,7 +40,7 @@ public final class FingerLockApi {
     /**
      * {@hide}
      */
-    public interface FingerLockImpl {
+    interface FingerLockImpl {
         /**
          * {@hide}
          * Returns <code>true</code> when fingerprint authentication is available and supported

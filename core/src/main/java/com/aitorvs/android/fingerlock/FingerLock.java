@@ -29,8 +29,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.aitorvs.android.fingerlock.internal.FingerLockApi;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
