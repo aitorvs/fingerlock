@@ -30,6 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.aitorvs.android.fingerlock.BuildConfig;
 import com.aitorvs.android.fingerlock.FingerLock;
 import com.aitorvs.android.fingerlock.FingerLockResultCallback;
 
@@ -122,7 +123,7 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
             // already registered, force clean unregister
             forceUnregister();
         }
-        Log.e(TAG, "Registering " + keyName);
+        if(BuildConfig.DEBUG) Log.d(TAG, "Registering " + keyName);
 
         mContext = context;
         mCallback = callback;
@@ -145,13 +146,13 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
         if (mCallback == listener) {
             mKey.recreateKey();
         } else {
-            Log.e(TAG, "recreateKey: non-registered listener trying to recreate key");
+            if(BuildConfig.DEBUG) Log.d(TAG, "recreateKey: non-registered listener trying to recreate key");
         }
     }
 
     @Override
     public boolean inUseBy(FingerLockResultCallback listener) {
-        Log.e(TAG, "inUseBy: " + (mCallback == listener ? "true" : "false"));
+        if(BuildConfig.DEBUG) Log.d(TAG, "inUseBy: " + (mCallback == listener ? "true" : "false"));
         return mContext != null && mCallback != null && mCallback == listener;
     }
 
@@ -162,7 +163,7 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
             mContext = null;
 
             stop();
-            Log.e(TAG, "unregister: OK");
+            if(BuildConfig.DEBUG) Log.d(TAG, "unregister: OK");
             return true;
         }
 
@@ -174,7 +175,7 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
         mContext = null;
 
         stop();
-        Log.e(TAG, "Force unregister: OK");
+        if(BuildConfig.DEBUG) Log.d(TAG, "Force unregister: OK");
     }
 
     private void invalidContext() throws IllegalStateException {
