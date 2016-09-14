@@ -10,7 +10,6 @@ android {
     }
     defaultConfig {
         minSdkVersion gradle.minSdkVersion
-        targetSdkVersion gradle.targetSdkVersion
     }
     buildTypes {
         release {
@@ -23,5 +22,7 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile "com.android.support:support-fragment:$gradle.supportLibraryVersion"
+    compile "com.android.support:support-annotations:$gradle.supportLibraryVersion"
+    compile "com.android.support:appcompat-v7:$gradle.supportLibraryVersion"
 }
