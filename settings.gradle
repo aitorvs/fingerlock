@@ -1,1 +1,6 @@
 include ':app', ':core', ':dialog'
+
+gradle.ext.minSdkVersion = 16
+gradle.ext.compileSdkVersion = 24
+gradle.ext.targetSdkVersion = 23
+gradle.ext.buildToolsVersion = '24.0.0'

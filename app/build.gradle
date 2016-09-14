@@ -5,8 +5,8 @@ def gitCommitCount = 100 +
         Integer.parseInt('git rev-list --count HEAD'.execute([], project.rootDir).text.trim())
 
 android {
-    compileSdkVersion setup.compileSdk
-    buildToolsVersion setup.buildTools
+    compileSdkVersion gradle.compileSdkVersion
+    buildToolsVersion gradle.buildToolsVersion
 
     lintOptions {
         // included for travis-ci integration
@@ -14,8 +14,8 @@ android {
     }
     defaultConfig {
         applicationId "com.aitorvs.android.fingerlock"
-        minSdkVersion setup.minSdk
-        targetSdkVersion setup.targetSdk
+        minSdkVersion gradle.minSdkVersion
+        targetSdkVersion gradle.targetSdkVersion
         versionCode gitCommitCount
         versionName gitTag
     }
@@ -30,8 +30,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 //    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
-    compile 'com.android.support:percent:24.0.0'
+    compile 'com.android.support:appcompat-v7:24.2.0'
+    compile 'com.android.support:percent:24.2.0'
     compile project(':core')
     compile project(':dialog')
 }
