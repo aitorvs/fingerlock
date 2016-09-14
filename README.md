@@ -4,6 +4,8 @@ FingerLock is a library designed to make fingerprint authentication an easy task
 **Note**: this library is powered by [material-dialogs](https://github.com/afollestad/material-dialogs),
 depending on this library will automatically depend on Material Dialogs.
 
+Check the related post on [Medium.](https://medium.com/@aitorvs/android-fingerprint-authentication-44c047179d9a#.6kxauxim3)
+
 # Gradle Dependency
 
 [![](https://jitpack.io/v/com.github.aitorvs.fingerlock/core.svg)](https://jitpack.io/#com.github.aitorvs.fingerlock/core)
