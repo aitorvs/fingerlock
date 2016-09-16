@@ -48,5 +48,10 @@ public interface FingerLockManager {
      */
     void stop();
 
-    void recreateKey(final Object listener);
+    /**
+     * Call this method to re-create the keys so that new (added) fingerprints are validated.
+     *
+     * @param listener instance that implements {@linkplain FingerLockResultCallback} interface
+     */
+    void recreateKey(final FingerLockResultCallback listener);
 }

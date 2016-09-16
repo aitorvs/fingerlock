@@ -159,9 +159,10 @@ public final class FingerLock extends Fragment implements FingerLockManager {
     }
 
     @Override
-    public void recreateKey(final Object listener) {
-        if (listener instanceof FingerLockResultCallback) {
-            impl.recreateKey((FingerLockResultCallback) listener);
+    public void recreateKey(@NonNull final FingerLockResultCallback listener) {
+        //noinspection ConstantConditions
+        if (listener != null) {
+            impl.recreateKey(listener);
         }
     }
 
