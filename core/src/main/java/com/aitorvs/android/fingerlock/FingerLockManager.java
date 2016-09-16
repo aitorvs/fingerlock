@@ -21,9 +21,9 @@
 package com.aitorvs.android.fingerlock;
 
 /**
- * Library public interface
+ * FingerLock utility to manage state and behavior of the {@linkplain FingerLock} library.
  */
-interface FingerLockLibraryCalls {
+public interface FingerLockManager {
     /**
      * Returns <code>true</code> when fingerprint authentication is available and supported
      *

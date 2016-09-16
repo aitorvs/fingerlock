@@ -32,7 +32,7 @@ import android.util.Log;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-public final class FingerLock extends Fragment implements FingerLockLibraryCalls{
+public final class FingerLock extends Fragment implements FingerLockManager {
 
     private static final String ARG_KEY_NAME = "ARG_KEY_NAME";
     private static final String TAG = FingerLock.class.getSimpleName();
@@ -88,7 +88,7 @@ public final class FingerLock extends Fragment implements FingerLockLibraryCalls
      * @param keyName  key name
      * @return library reference
      */
-    public static FingerLock initialize(@NonNull AppCompatActivity activity, @NonNull String keyName) {
+    public static FingerLockManager initialize(@NonNull AppCompatActivity activity, @NonNull String keyName) {
         //noinspection ConstantConditions
         if (activity == null) {
             return null;

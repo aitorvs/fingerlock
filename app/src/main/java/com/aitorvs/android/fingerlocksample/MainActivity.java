@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.aitorvs.android.fingerlock.FingerLock;
 import com.aitorvs.android.fingerlock.FingerLockResultCallback;
+import com.aitorvs.android.fingerlock.FingerLockManager;
 import com.aitorvs.android.fingerlock.FingerprintDialog;
 
 
@@ -42,7 +43,7 @@ public class MainActivity extends AppCompatActivity
     private static final String KEY_NAME = "FingerLockAppKey";
     private TextView mStatus;
     private Button mButton;
-    private FingerLock mFingerLock;
+    private FingerLockManager mFingerLock;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
