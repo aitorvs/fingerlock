@@ -1,6 +1,14 @@
 Change Log
 ==========
 
+Version 1.0.0 *(2016-xx-xx)*
+----------------------------
+
+**Warning: this is a major release, some methods have been removed or changed.**
+
+ * Fix visibility of classes and interfaces
+ * Refactor some classes to put the core library behind an interface
+
 Version 0.2.3 *(2016-09-14)*
 ----------------------------
 
