@@ -113,7 +113,7 @@ public final class FingerLock extends Fragment implements FingerLockLibraryCalls
      * @param keyName keyname
      * @return uninitialized library reference
      */
-    public static FingerLock createInstance(@NonNull String keyName) {
+    private static FingerLock createInstance(@NonNull String keyName) {
         FingerLock fragment = new FingerLock();
         Bundle arguments = new Bundle();
         arguments.putString(ARG_KEY_NAME, keyName);
