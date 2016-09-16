@@ -1,13 +1,14 @@
 Change Log
 ==========
 
-Version 1.0.0 *(2016-xx-xx)*
+Version 1.0.0 *(2016-09-16)*
 ----------------------------
 
-**Warning: this is a major release, some methods have been removed or changed.**
+**Warning: this is a major release, interfaces have changed.**
 
- * Fix visibility of classes and interfaces
+ * **The method `FingerLock.initialize()` returns a `FingerLockManager` instance**
  * Refactor some classes to put the core library behind an interface
+ * Fix visibility of classes and interfaces
 
 Version 0.2.3 *(2016-09-14)*
 ----------------------------
