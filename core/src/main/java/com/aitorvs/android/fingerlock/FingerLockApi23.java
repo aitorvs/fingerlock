@@ -36,7 +36,7 @@ import java.security.InvalidParameterException;
 class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
 
     private static final String TAG = FingerLockApi23.class.getSimpleName();
-    private static FingerprintAuthHandler mAuthenticationHandler;
+    private FingerprintAuthHandler mAuthenticationHandler;
     private Context mContext;
     private Key mKey;
     private FingerLockResultCallback mCallback;
