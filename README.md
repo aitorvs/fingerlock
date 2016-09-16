@@ -32,7 +32,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:core:0.2.3'
+    compile 'com.github.aitorvs.fingerlock:core:0.2.x'
 }
 ```
 
@@ -47,7 +47,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile 'com.github.aitorvs.fingerlock:dialog:0.2.3'
+    compile 'com.github.aitorvs.fingerlock:dialog:0.2.x'
 }
 ```
 # Core
@@ -72,9 +72,12 @@ public class MainActivity extends AppCompatActivity
 ```java
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        private FingerLockManager mFingerLockManager;
+        
         // ... Some code here
 
-        mFingerLock = FingerLock.initialize(this, KEY_NAME);
+        // returns a manager object to manage the fingerprint authentication
+        mFingerLockManager = FingerLock.initialize(this, KEY_NAME);
     }
 ```
 
@@ -92,7 +95,7 @@ It is as simple as calling the `start()` method.
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FingerLock.start();
+                mFingerLockManager.start();
             }
         });
 
@@ -108,13 +111,13 @@ It is as simple as calling the `start()` method.
     @Override
     public void onFingerLockReady() {
         // Called right after registration if the device supports fingerprint authentication.
-        // This is normally a good place to call FingerLock.start()
+        // This is normally a good place to call mFingerLockManager.start()
     }
 ```
 
 This method is called when the library finishes the registration process successfully.
 
-This is normally a good place to call `FingerLock.start()` so start the fingerprint(s) scanning process.
+This is normally a good place to call `start()` so start the fingerprint(s) scanning process.
 
 
 ####Fingerprint(s) Scanning
@@ -122,9 +125,9 @@ This is normally a good place to call `FingerLock.start()` so start the fingerpr
 ```java
     @Override
     public void onFingerLockScanning(boolean invalidKey) {
-        // Called to notify the fingerprint scanning is started successfully as a result of FingerLock.start()
+        // Called to notify the fingerprint scanning is started successfully as a result of mFingerLockManager.start()
         // The 'invalidKey' parameter will be true when the key is no longer valid. This happens when
-        // the user disables the lock screen, resets or adds a new fingerprint after the key was created (i.e. FingerLock.register())
+        // the user disables the lock screen, resets or adds a new fingerprint after the key was created (i.e. mFingerLockManager.register())
     }
 ```
 
@@ -132,7 +135,7 @@ The callback `onFingerLockScanning(boolean)` is called when the library has star
 scanning for fingerprint(s) to authenticate the user. The input parameter `invalidKey` flags when the key provided
 during registration is no longer valid. Either because the user disabled the lock screen, device reset or
 a new fingerprint was added.
-For security purposes it is recommended to stop scanning fingerpring(s) calling `FingerLock.stop()` and
+For security purposes it is recommended to stop scanning fingerpring(s) calling `stop()` and
 fallback to any other type of authentication (i.e. password) that authenticates the user and let
 them use fingerprint the next time.
 
