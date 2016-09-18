@@ -20,46 +20,32 @@
 
 package com.aitorvs.android.fingerlock;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
-import static com.aitorvs.android.fingerlock.Preconditions.checkNotNull;
-
-class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
-    @Override
-    public boolean isFingerprintAuthSupported() {
-        return false;
+/**
+ * Precondition checks
+ */
+final class Preconditions {
+    public static void checkState(final boolean expression, @NonNull final String errorMessage) {
+        if (!expression) {
+            throw new IllegalStateException(errorMessage);
+        }
     }
 
-    @Override
-    public boolean isFingerprintRegistered() {
-        return false;
+    public static void checkArgument(final boolean expression, @NonNull final String errorMessage) {
+        if (!expression) {
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
 
-    @Override
-    public void start() {
+    @SuppressWarnings("ConstantConditions")
+    @NonNull
+    public static <T> T checkNotNull(@NonNull final T object) {
+        if (object == null) {
+            throw new NullPointerException();
+        }
+        return object;
     }
 
-    @Override
-    public void stop() {
-    }
-
-    @Override
-    public void register(@NonNull Context context, @NonNull final String keyName, @NonNull FingerLockResultCallback callback) {
-        checkNotNull(callback).onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
-    }
-
-    @Override
-    public boolean unregister(@NonNull FingerLockResultCallback listener) {
-        return true;
-    }
-
-    @Override
-    public boolean inUseBy(FingerLockResultCallback listener) {
-        return false;
-    }
-
-    @Override
-    public void recreateKey(FingerLockResultCallback listener) {
-    }
+    private Preconditions() {}
 }

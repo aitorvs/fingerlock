@@ -20,6 +20,8 @@
 
 package com.aitorvs.android.fingerlock;
 
+import android.support.annotation.NonNull;
+
 /**
  * FingerLock utility to manage state and behavior of the {@linkplain FingerLock} library.
  */
@@ -53,5 +55,5 @@ public interface FingerLockManager {
      *
      * @param listener instance that implements {@linkplain FingerLockResultCallback} interface
      */
-    void recreateKey(final FingerLockResultCallback listener);
+    void recreateKey(@NonNull final FingerLockResultCallback listener);
 }

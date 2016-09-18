@@ -30,7 +30,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import java.security.InvalidParameterException;
+import static com.aitorvs.android.fingerlock.Preconditions.checkNotNull;
 
 @TargetApi(Build.VERSION_CODES.M)
 class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
@@ -111,19 +111,15 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
 
     @Override
     public void register(@NonNull Context context, @NonNull final String keyName, @NonNull FingerLockResultCallback callback) {
-        // double check
-        //noinspection ConstantConditions
-        if (context == null || callback == null || keyName == null) {
-            throw new InvalidParameterException("Invalid or null input parameters");
-        } else if (mCallback != null) {
+        if (mCallback != null) {
             // already registered, force clean unregister
             forceUnregister();
         }
         if(BuildConfig.DEBUG) Log.d(TAG, "Registering " + keyName);
 
-        mContext = context;
-        mCallback = callback;
-        mKey = new Key(keyName);
+        mContext = checkNotNull(context);
+        mCallback = checkNotNull(callback);
+        mKey = new Key(checkNotNull(keyName));
 
         mFingerprintManager = getFingerprintManager();
 

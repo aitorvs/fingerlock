@@ -32,6 +32,8 @@ import android.util.Log;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
+import static com.aitorvs.android.fingerlock.Preconditions.checkNotNull;
+
 public final class FingerLock extends Fragment implements FingerLockManager {
 
     private static final String ARG_KEY_NAME = "ARG_KEY_NAME";
@@ -89,15 +91,10 @@ public final class FingerLock extends Fragment implements FingerLockManager {
      * @return library reference
      */
     public static FingerLockManager initialize(@NonNull AppCompatActivity activity, @NonNull String keyName) {
-        //noinspection ConstantConditions
-        if (activity == null) {
-            return null;
-        }
-
         // Have we created the fragment before ?
-        FingerLock fragment = (FingerLock) activity.getSupportFragmentManager().findFragmentByTag(TAG_FINGER_LOCK_FRAGMENT);
+        FingerLock fragment = (FingerLock) checkNotNull(activity).getSupportFragmentManager().findFragmentByTag(TAG_FINGER_LOCK_FRAGMENT);
         if (fragment == null) {
-            fragment = createInstance(keyName);
+            fragment = createInstance(checkNotNull(keyName));
             activity.getSupportFragmentManager()
                     .beginTransaction()
                     .add(fragment, TAG_FINGER_LOCK_FRAGMENT)
@@ -160,10 +157,7 @@ public final class FingerLock extends Fragment implements FingerLockManager {
 
     @Override
     public void recreateKey(@NonNull final FingerLockResultCallback listener) {
-        //noinspection ConstantConditions
-        if (listener != null) {
-            impl.recreateKey(listener);
-        }
+        impl.recreateKey(checkNotNull(listener));
     }
 
     /**
