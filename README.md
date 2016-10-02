@@ -50,6 +50,14 @@ dependencies {
     compile 'com.github.aitorvs.fingerlock:dialog:1.0.0'
 }
 ```
+### Manifest
+
+The library requires the `USE_FINGERPRINT` permission. Just add the following to your `AndroidManifest.xml` file
+ 
+ ```
+ <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+ ```
+
 # Core
 
 The core module requires Android M and above and also a device supporting fingerprint sensor. If you target
