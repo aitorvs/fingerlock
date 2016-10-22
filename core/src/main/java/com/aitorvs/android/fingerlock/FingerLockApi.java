@@ -58,6 +58,11 @@ final class FingerLockApi {
         boolean isFingerprintRegistered();
 
         /**
+         * @return <code>true</code> when fingerprint premission is granted
+         */
+        boolean isFingerprintPermissionGranted();
+
+        /**
          * {@hide}
          * Call this method to start fingerprint scanning
          */
@@ -90,7 +95,8 @@ final class FingerLockApi {
 
         boolean inUseBy(FingerLockResultCallback listener);
 
-        /**{@hide}
+        /**
+         * {@hide}
          * Recreate the secret key.
          */
         void recreateKey(FingerLockResultCallback listener);

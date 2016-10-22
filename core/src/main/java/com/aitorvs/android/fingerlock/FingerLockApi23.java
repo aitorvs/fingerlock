@@ -44,14 +44,6 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
 
     @Override
     public boolean isFingerprintAuthSupported() {
-        invalidContext();
-
-        // check permissions
-        int granted = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.USE_FINGERPRINT);
-        if (granted != PackageManager.PERMISSION_GRANTED) {
-            // not granted
-            return false;
-        }
 
         // return hardware support
         //noinspection MissingPermission
@@ -59,6 +51,14 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
                 && mFingerprintManager.isHardwareDetected()
                 && mFingerprintManager.hasEnrolledFingerprints();
 
+    }
+
+    @Override
+    public boolean isFingerprintPermissionGranted() {
+        // check permissions
+        int granted = ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.USE_FINGERPRINT);
+
+        return granted == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -75,7 +75,11 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
     @Override
     public void start() {
         if (!isFingerprintAuthSupported()) {
-            mCallback.onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
+            mCallback.onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED,
+                    new Exception("Fingerprint authentication not supported in this device"));
+        } else if (!isFingerprintPermissionGranted()) {
+            mCallback.onFingerLockError(FingerLock.FINGERPRINT_PERMISSION_DENIED,
+                    new Exception("Fingerprint permission denied"));
         } else if (mAuthenticationHandler != null && mAuthenticationHandler.isStarted()) {
             // auth handler already listening...do nothing
         } else {
@@ -93,7 +97,8 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
                 } catch (NullKeyException e1) {
                     // something went wrong unregister and notify
                     stop();
-                    mCallback.onFingerLockError(FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR, new Exception("Key creation failed."));
+                    mCallback.onFingerLockError(FingerLock.FINGERPRINT_UNRECOVERABLE_ERROR,
+                            new Exception("Key creation failed."));
                 }
             }
         }
@@ -126,9 +131,14 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
         mFingerprintManager = getFingerprintManager();
 
         if (!isFingerprintAuthSupported()) {
-            callback.onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
+            callback.onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED,
+                    new Exception("Fingerprint authentication not supported in this device"));
+        } else if (!isFingerprintPermissionGranted()) {
+            callback.onFingerLockError(FingerLock.FINGERPRINT_PERMISSION_DENIED,
+                    new Exception("Fingerprint permission denied"));
         } else if (!isFingerprintRegistered()) {
-            callback.onFingerLockError(FingerLock.FINGERPRINT_REGISTRATION_NEEDED, new Exception("No fingerprints registered in this device"));
+            callback.onFingerLockError(FingerLock.FINGERPRINT_REGISTRATION_NEEDED,
+                    new Exception("No fingerprints registered in this device"));
         } else {
             // all systems Go!
             callback.onFingerLockReady();
@@ -172,19 +182,11 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
         if(BuildConfig.DEBUG) Log.d(TAG, "Force unregister: OK");
     }
 
-    private void invalidContext() throws IllegalStateException {
-        if (mContext == null) {
-            throw new IllegalStateException("Callback listener not registered");
-        }
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     private FingerprintManager getFingerprintManager() {
 
         if (mFingerprintManager == null) {
-            invalidContext();
-
             mFingerprintManager = (FingerprintManager) mContext.getSystemService(Context.FINGERPRINT_SERVICE);
         }
 

@@ -35,6 +35,11 @@ class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
     }
 
     @Override
+    public boolean isFingerprintPermissionGranted() {
+        return false;
+    }
+
+    @Override
     public void start() {
     }
 
