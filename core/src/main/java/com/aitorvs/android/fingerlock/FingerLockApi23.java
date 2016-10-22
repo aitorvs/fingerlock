@@ -30,8 +30,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import static com.aitorvs.android.fingerlock.Preconditions.checkNotNull;
-
 @TargetApi(Build.VERSION_CODES.M)
 class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
 
@@ -111,15 +109,19 @@ class FingerLockApi23 implements FingerLockApi.FingerLockImpl {
 
     @Override
     public void register(@NonNull Context context, @NonNull final String keyName, @NonNull FingerLockResultCallback callback) {
+        Preconditions.checkNotNull(context);
+        Preconditions.checkNotNull(keyName);
+        Preconditions.checkNotNull(callback);
+
         if (mCallback != null) {
             // already registered, force clean unregister
             forceUnregister();
         }
         if(BuildConfig.DEBUG) Log.d(TAG, "Registering " + keyName);
 
-        mContext = checkNotNull(context);
-        mCallback = checkNotNull(callback);
-        mKey = new Key(checkNotNull(keyName));
+        mContext = context;
+        mCallback = callback;
+        mKey = new Key(keyName);
 
         mFingerprintManager = getFingerprintManager();
 

@@ -23,8 +23,6 @@ package com.aitorvs.android.fingerlock;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
-import static com.aitorvs.android.fingerlock.Preconditions.checkNotNull;
-
 class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
     @Override
     public boolean isFingerprintAuthSupported() {
@@ -45,8 +43,14 @@ class FingerLockApiBase implements FingerLockApi.FingerLockImpl {
     }
 
     @Override
-    public void register(@NonNull Context context, @NonNull final String keyName, @NonNull FingerLockResultCallback callback) {
-        checkNotNull(callback).onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED, new Exception("Fingerprint authentication not supported in this device"));
+    public void register(@NonNull Context context, @NonNull final String keyName,
+                         @NonNull FingerLockResultCallback callback) {
+        Preconditions.checkNotNull(context);
+        Preconditions.checkNotNull(keyName);
+        Preconditions.checkNotNull(callback);
+
+        callback.onFingerLockError(FingerLock.FINGERPRINT_NOT_SUPPORTED,
+                new Exception("Fingerprint authentication not supported in this device"));
     }
 
     @Override
