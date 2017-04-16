@@ -1,4 +1,4 @@
-#FingerLock
+# FingerLock
 FingerLock is a library designed to make fingerprint authentication an easy task for Android developers.
 
 **Note**: this library is powered by [material-dialogs](https://github.com/afollestad/material-dialogs),
@@ -13,7 +13,7 @@ Check the related post on [Medium.](https://medium.com/@aitorvs/android-fingerpr
 [![Build Status](https://travis-ci.org/aitorvs/fingerlock.svg)](https://travis-ci.org/aitorvs/fingerlock)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-FingerLock-green.svg?style=true)](https://android-arsenal.com/details/1/4330)
 
-##Repository
+## Repository
 
 ```gradle
 repositories {
@@ -23,7 +23,7 @@ repositories {
 
 ## Dependencies
 
-###Core
+### Core
 
 The *core* module contains the core class `FingerLock` to perform full fingerprint authentication.
 
@@ -36,7 +36,7 @@ dependencies {
 }
 ```
 
-###Fingerprint Dialog Extension
+### Fingerprint Dialog Extension
 
 The *dialog* extension module is powered by [material-dialogs](https://github.com/afollestad/material-dialogs)
 library and provides an out-of-the-box-ready material authentication dialog based on the design guidelines on fingerprint
@@ -65,7 +65,7 @@ devices before M or not having fingerprint sensors, use the dialog extension.
 
 ## (Core) FingerLock in 4 steps
 
-###1. Implement the `FingerLockResultCallback` inside your Activity/Fragment
+### 1. Implement the `FingerLockResultCallback` inside your Activity/Fragment
 
 ```java
 public class MainActivity extends AppCompatActivity
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity
 }
 ```
 
-###2. Initialize the library (e.g. inside `onCreate()` method)
+### 2. Initialize the library (e.g. inside `onCreate()` method)
 
 
 ```java
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     }
 ```
 
-###3. Start the fingerprint scanning
+### 3. Start the fingerprint scanning
 
 It is as simple as calling the `start()` method.
 
@@ -111,9 +111,9 @@ It is as simple as calling the `start()` method.
     }
 ```
 
-###4. Handle the callbacks
+### 4. Handle the callbacks
 
-####Library is ready
+#### Library is ready
 
 ```java
     @Override
@@ -128,7 +128,7 @@ This method is called when the library finishes the registration process success
 This is normally a good place to call `start()` so start the fingerprint(s) scanning process.
 
 
-####Fingerprint(s) Scanning
+#### Fingerprint(s) Scanning
 
 ```java
     @Override
@@ -147,7 +147,7 @@ For security purposes it is recommended to stop scanning fingerpring(s) calling 
 fallback to any other type of authentication (i.e. password) that authenticates the user and let
 them use fingerprint the next time.
 
-####Authenticated
+#### Authenticated
 
 ```java
     @Override
@@ -158,7 +158,7 @@ them use fingerprint the next time.
 
 This method is called upon successful fingerprint authentication.
 
-####Error
+#### Error
 
 The callback provides error events that may happen throughout the fingerprint authentication process.
 
@@ -284,7 +284,7 @@ value is set to `true`.
 
 ### 3. Handle callbacks
 
-####Authenticated
+#### Authenticated
 
 ```java
     @Override
@@ -293,7 +293,7 @@ value is set to `true`.
     }
 ```
 
-####Verify password
+#### Verify password
 
 ```java
     @Override
@@ -316,7 +316,7 @@ key is no longer valid or because the user required so.
 
 Once the password is verified, notify the dialog calling `dialog.notifyPasswordValidation(boolean)`.
 
-####State updated
+#### State updated
 
 ```java
     @Override
@@ -337,7 +337,7 @@ Method called at every internal stage change. Possible states are:
 
 It is normally not necessary to act on any of the stages.
 
-####Authentication cancelled
+#### Authentication cancelled
 
 Called when the user cancels the authentication dialog.
 
